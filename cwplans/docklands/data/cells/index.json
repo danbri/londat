@@ -27,7 +27,18 @@
    "bytes": 191426,
    "built": "2026-11-25T13:02:27.193Z",
    "minutes": 0.4,
-   "commit": "2048e8a"
+   "commit": "2048e8a",
+   "roads": {
+    "state": "published",
+    "files": 4,
+    "segments": 1072,
+    "points": 5372,
+    "km": 190,
+    "bytes": 55629,
+    "built": "2026-11-25T15:30:51.723Z",
+    "minutes": 0.1,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-248-199",
@@ -40,7 +51,18 @@
    "bytes": 4371748,
    "built": "2026-11-25T13:03:19.681Z",
    "minutes": 0.9,
-   "commit": "2048e8a"
+   "commit": "2048e8a",
+   "roads": {
+    "state": "published",
+    "files": 36,
+    "segments": 39086,
+    "points": 165229,
+    "km": 5342,
+    "bytes": 1809972,
+    "built": "2026-11-25T15:31:06.092Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-249-199",
@@ -53,7 +75,18 @@
    "bytes": 3051496,
    "built": "2026-11-25T13:04:09.134Z",
    "minutes": 0.6,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 34,
+    "segments": 29388,
+    "points": 147457,
+    "km": 5414,
+    "bytes": 1508077,
+    "built": "2026-11-25T15:31:18.984Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-250-199",
@@ -66,7 +99,18 @@
    "bytes": 5924999,
    "built": "2026-11-25T13:05:10.252Z",
    "minutes": 1,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 36,
+    "segments": 52276,
+    "points": 208482,
+    "km": 6882,
+    "bytes": 2394396,
+    "built": "2026-11-25T15:31:36.003Z",
+    "minutes": 0.3,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-251-199",
@@ -79,7 +123,18 @@
    "bytes": 639291,
    "built": "2026-11-25T13:05:33.424Z",
    "minutes": 0.4,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 4,
+    "segments": 4893,
+    "points": 16868,
+    "km": 449,
+    "bytes": 208603,
+    "built": "2026-11-25T15:31:49.066Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-252-199",
@@ -92,7 +147,18 @@
    "bytes": 552098,
    "built": "2026-11-25T13:05:53.772Z",
    "minutes": 0.3,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 5,
+    "segments": 4275,
+    "points": 13890,
+    "km": 351,
+    "bytes": 173544,
+    "built": "2026-11-25T15:31:56.959Z",
+    "minutes": 0.1,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-253-199",
@@ -105,7 +171,18 @@
    "bytes": 180301,
    "built": "2026-11-25T13:06:14.180Z",
    "minutes": 0.3,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 2,
+    "segments": 1315,
+    "points": 4673,
+    "km": 135,
+    "bytes": 55721,
+    "built": "2026-11-25T15:32:04.831Z",
+    "minutes": 0.1,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-254-199",
@@ -118,7 +195,18 @@
    "bytes": 187384,
    "built": "2026-11-25T13:06:32.733Z",
    "minutes": 0.3,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 3,
+    "segments": 1399,
+    "points": 5553,
+    "km": 167,
+    "bytes": 63057,
+    "built": "2026-11-25T15:32:16.312Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-249-200",
@@ -131,7 +219,18 @@
    "bytes": 1752573,
    "built": "2026-11-25T13:07:04.917Z",
    "minutes": 0.5,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 26,
+    "segments": 11971,
+    "points": 66643,
+    "km": 2785,
+    "bytes": 661730,
+    "built": "2026-11-25T15:32:24.932Z",
+    "minutes": 0.1,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-250-200",
@@ -144,7 +243,18 @@
    "bytes": 4780720,
    "built": "2026-11-25T13:07:51.745Z",
    "minutes": 0.8,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 57,
+    "segments": 38537,
+    "points": 201747,
+    "km": 7905,
+    "bytes": 2057656,
+    "built": "2026-11-25T15:32:35.080Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-251-200",
@@ -157,7 +267,18 @@
    "bytes": 8964536,
    "built": "2026-11-25T13:09:19.015Z",
    "minutes": 1.5,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 57,
+    "segments": 90130,
+    "points": 341909,
+    "km": 10571,
+    "bytes": 3901691,
+    "built": "2026-11-25T15:32:48.848Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-252-200",
@@ -170,7 +291,18 @@
    "bytes": 9207603,
    "built": "2026-11-25T13:10:37.305Z",
    "minutes": 1.3,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 64,
+    "segments": 73603,
+    "points": 292468,
+    "km": 10141,
+    "bytes": 3321453,
+    "built": "2026-11-25T15:32:59.360Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-253-200",
@@ -183,7 +315,18 @@
    "bytes": 10588203,
    "built": "2026-11-25T13:12:26.728Z",
    "minutes": 1.8,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 62,
+    "segments": 108648,
+    "points": 363716,
+    "km": 11134,
+    "bytes": 4420977,
+    "built": "2026-11-25T15:33:10.646Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-254-200",
@@ -196,7 +339,18 @@
    "bytes": 15634155,
    "built": "2026-11-25T13:14:42.087Z",
    "minutes": 2.3,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 60,
+    "segments": 171668,
+    "points": 549345,
+    "km": 15479,
+    "bytes": 6782099,
+    "built": "2026-11-25T15:33:26.777Z",
+    "minutes": 0.3,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-255-200",
@@ -209,7 +363,18 @@
    "bytes": 16303495,
    "built": "2026-11-25T13:17:14.975Z",
    "minutes": 2.5,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 51,
+    "segments": 144544,
+    "points": 484746,
+    "km": 13372,
+    "bytes": 5729331,
+    "built": "2026-11-25T15:33:39.699Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-256-200",
@@ -222,7 +387,18 @@
    "bytes": 10681790,
    "built": "2026-11-25T13:18:43.303Z",
    "minutes": 1.5,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 52,
+    "segments": 89168,
+    "points": 332183,
+    "km": 10500,
+    "bytes": 3704494,
+    "built": "2026-11-25T15:33:53.689Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-257-200",
@@ -235,7 +411,18 @@
    "bytes": 5449174,
    "built": "2026-11-25T13:19:35.799Z",
    "minutes": 0.9,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 33,
+    "segments": 54083,
+    "points": 188973,
+    "km": 6002,
+    "bytes": 2175980,
+    "built": "2026-11-25T15:34:05.820Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-258-200",
@@ -248,7 +435,18 @@
    "bytes": 4810481,
    "built": "2026-11-25T13:20:23.877Z",
    "minutes": 0.8,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 32,
+    "segments": 29970,
+    "points": 117464,
+    "km": 5118,
+    "bytes": 1390090,
+    "built": "2026-11-25T15:34:17.223Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-248-201",
@@ -261,7 +459,18 @@
    "bytes": 1568305,
    "built": "2026-11-25T13:20:47.961Z",
    "minutes": 0.4,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 17,
+    "segments": 8964,
+    "points": 42420,
+    "km": 1849,
+    "bytes": 454235,
+    "built": "2026-11-25T15:34:32.748Z",
+    "minutes": 0.3,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-249-201",
@@ -274,7 +483,18 @@
    "bytes": 2856746,
    "built": "2026-11-25T13:21:20.207Z",
    "minutes": 0.5,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 38,
+    "segments": 17910,
+    "points": 101202,
+    "km": 4477,
+    "bytes": 1000107,
+    "built": "2026-11-25T15:34:45.520Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-250-201",
@@ -287,7 +507,18 @@
    "bytes": 7903429,
    "built": "2026-11-25T13:22:30.545Z",
    "minutes": 1.2,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 51,
+    "segments": 54673,
+    "points": 215583,
+    "km": 7539,
+    "bytes": 2481802,
+    "built": "2026-11-25T15:34:59.912Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-251-201",
@@ -300,7 +531,18 @@
    "bytes": 15151043,
    "built": "2026-11-25T13:24:22.155Z",
    "minutes": 1.9,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 61,
+    "segments": 125375,
+    "points": 442852,
+    "km": 13438,
+    "bytes": 5301267,
+    "built": "2026-11-25T15:35:13.737Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-252-201",
@@ -313,7 +555,18 @@
    "bytes": 16918854,
    "built": "2026-11-25T13:26:50.952Z",
    "minutes": 2.5,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 64,
+    "segments": 153896,
+    "points": 545013,
+    "km": 16441,
+    "bytes": 6483784,
+    "built": "2026-11-25T15:35:31.991Z",
+    "minutes": 0.3,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-253-201",
@@ -326,7 +579,18 @@
    "bytes": 9732443,
    "built": "2026-11-25T13:28:15.299Z",
    "minutes": 1.4,
-   "commit": "34d8466"
+   "commit": "34d8466",
+   "roads": {
+    "state": "published",
+    "files": 64,
+    "segments": 91950,
+    "points": 325534,
+    "km": 10720,
+    "bytes": 3856812,
+    "built": "2026-11-25T15:35:44.799Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-254-201",
@@ -339,7 +603,18 @@
    "bytes": 17418173,
    "built": "2026-11-25T13:30:47.127Z",
    "minutes": 2.1,
-   "commit": "cfff539"
+   "commit": "cfff539",
+   "roads": {
+    "state": "published",
+    "files": 64,
+    "segments": 160642,
+    "points": 533012,
+    "km": 15994,
+    "bytes": 6463921,
+    "built": "2026-11-25T15:36:02.391Z",
+    "minutes": 0.3,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-255-201",
@@ -352,7 +627,18 @@
    "bytes": 59508660,
    "built": "2026-11-25T13:37:33.625Z",
    "minutes": 6.8,
-   "commit": "cfff539"
+   "commit": "cfff539",
+   "roads": {
+    "state": "published",
+    "files": 64,
+    "segments": 401373,
+    "points": 1211330,
+    "km": 33483,
+    "bytes": 15269187,
+    "built": "2026-11-25T15:36:32.990Z",
+    "minutes": 0.5,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-256-201",
@@ -365,7 +651,18 @@
    "bytes": 31053562,
    "built": "2026-11-25T13:41:44.596Z",
    "minutes": 4.2,
-   "commit": "cfff539"
+   "commit": "cfff539",
+   "roads": {
+    "state": "published",
+    "files": 64,
+    "segments": 222711,
+    "points": 713375,
+    "km": 21363,
+    "bytes": 8480604,
+    "built": "2026-11-25T15:36:51.658Z",
+    "minutes": 0.3,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-257-201",
@@ -378,7 +675,18 @@
    "bytes": 8470783,
    "built": "2026-11-25T13:43:09.820Z",
    "minutes": 1.4,
-   "commit": "cfff539"
+   "commit": "cfff539",
+   "roads": {
+    "state": "published",
+    "files": 43,
+    "segments": 66054,
+    "points": 225417,
+    "km": 7203,
+    "bytes": 2666077,
+    "built": "2026-11-25T15:37:03.811Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-258-201",
@@ -391,7 +699,18 @@
    "bytes": 492857,
    "built": "2026-11-25T13:43:30.247Z",
    "minutes": 0.3,
-   "commit": "cfff539"
+   "commit": "cfff539",
+   "roads": {
+    "state": "published",
+    "files": 2,
+    "segments": 3456,
+    "points": 9840,
+    "km": 259,
+    "bytes": 132247,
+    "built": "2026-11-25T15:37:12.149Z",
+    "minutes": 0.1,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-248-202",
@@ -404,7 +723,18 @@
    "bytes": 20794,
    "built": "2026-11-25T13:43:50.149Z",
    "minutes": 0.3,
-   "commit": "cfff539"
+   "commit": "cfff539",
+   "roads": {
+    "state": "published",
+    "files": 0,
+    "segments": 0,
+    "points": 0,
+    "km": 0,
+    "bytes": 0,
+    "built": "2026-11-25T15:37:22.980Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-249-202",
@@ -417,7 +747,18 @@
    "bytes": 951875,
    "built": "2026-11-25T13:44:13.180Z",
    "minutes": 0.4,
-   "commit": "cfff539"
+   "commit": "cfff539",
+   "roads": {
+    "state": "published",
+    "files": 15,
+    "segments": 6779,
+    "points": 36333,
+    "km": 1613,
+    "bytes": 365024,
+    "built": "2026-11-25T15:37:32.593Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-250-202",
@@ -430,7 +771,18 @@
    "bytes": 1775988,
    "built": "2026-11-25T13:44:23.666Z",
    "minutes": 0.2,
-   "commit": "cfff539"
+   "commit": "cfff539",
+   "roads": {
+    "state": "published",
+    "files": 60,
+    "segments": 13771,
+    "points": 96434,
+    "km": 4288,
+    "bytes": 901086,
+    "built": "2026-11-25T15:37:44.346Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-251-202",
@@ -443,7 +795,18 @@
    "bytes": 3572673,
    "built": "2026-11-25T13:45:01.814Z",
    "minutes": 0.6,
-   "commit": "cfff539"
+   "commit": "cfff539",
+   "roads": {
+    "state": "published",
+    "files": 64,
+    "segments": 27484,
+    "points": 163282,
+    "km": 7072,
+    "bytes": 1587244,
+    "built": "2026-11-25T15:37:54.886Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-252-202",
@@ -456,7 +819,18 @@
    "bytes": 13252992,
    "built": "2026-11-25T13:46:56.725Z",
    "minutes": 1.9,
-   "commit": "cfff539"
+   "commit": "cfff539",
+   "roads": {
+    "state": "published",
+    "files": 64,
+    "segments": 112726,
+    "points": 417731,
+    "km": 13542,
+    "bytes": 4909246,
+    "built": "2026-11-25T15:38:10.329Z",
+    "minutes": 0.3,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-253-202",
@@ -469,7 +843,18 @@
    "bytes": 29995590,
    "built": "2026-11-25T13:50:55.879Z",
    "minutes": 4,
-   "commit": "cfff539"
+   "commit": "cfff539",
+   "roads": {
+    "state": "published",
+    "files": 64,
+    "segments": 247334,
+    "points": 784133,
+    "km": 22763,
+    "bytes": 9930922,
+    "built": "2026-11-25T15:38:31.270Z",
+    "minutes": 0.3,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-254-202",
@@ -482,7 +867,18 @@
    "bytes": 18122928,
    "built": "2026-11-25T13:53:33.201Z",
    "minutes": 2.2,
-   "commit": "1b9102a"
+   "commit": "1b9102a",
+   "roads": {
+    "state": "published",
+    "files": 64,
+    "segments": 153052,
+    "points": 488848,
+    "km": 14691,
+    "bytes": 6074277,
+    "built": "2026-11-25T15:38:47.943Z",
+    "minutes": 0.3,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-255-202",
@@ -495,7 +891,18 @@
    "bytes": 11964337,
    "built": "2026-11-25T13:55:19.194Z",
    "minutes": 1.8,
-   "commit": "1b9102a"
+   "commit": "1b9102a",
+   "roads": {
+    "state": "published",
+    "files": 64,
+    "segments": 104250,
+    "points": 342547,
+    "km": 11143,
+    "bytes": 4112739,
+    "built": "2026-11-25T15:39:01.397Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-256-202",
@@ -508,7 +915,18 @@
    "bytes": 9268944,
    "built": "2026-11-25T13:56:37.881Z",
    "minutes": 1.3,
-   "commit": "1b9102a"
+   "commit": "1b9102a",
+   "roads": {
+    "state": "published",
+    "files": 64,
+    "segments": 72304,
+    "points": 248204,
+    "km": 9029,
+    "bytes": 2847760,
+    "built": "2026-11-25T15:39:12.230Z",
+    "minutes": 0.2,
+    "commit": "b70c816"
+   }
   },
   {
    "key": "8-257-202",
@@ -521,7 +939,17 @@
    "bytes": 11636061,
    "built": "2026-11-25T14:23:42.874Z",
    "minutes": 1.7,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 64,
+    "segments": 97325,
+    "points": 349506,
+    "km": 11876,
+    "bytes": 4022395,
+    "built": "2026-11-25T15:39:24.938Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-258-202",
@@ -534,7 +962,17 @@
    "bytes": 3268617,
    "built": "2026-11-25T14:24:22.769Z",
    "minutes": 0.7,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 29,
+    "segments": 31714,
+    "points": 114542,
+    "km": 4118,
+    "bytes": 1338963,
+    "built": "2026-11-25T15:39:40.217Z",
+    "minutes": 0.3
+   }
   },
   {
    "key": "8-249-203",
@@ -547,7 +985,17 @@
    "bytes": 2295604,
    "built": "2026-11-25T14:24:54.431Z",
    "minutes": 0.5,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 36,
+    "segments": 16980,
+    "points": 83998,
+    "km": 3324,
+    "bytes": 863927,
+    "built": "2026-11-25T15:39:49.924Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-250-203",
@@ -560,7 +1008,17 @@
    "bytes": 3264343,
    "built": "2026-11-25T14:25:33.929Z",
    "minutes": 0.7,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 56,
+    "segments": 29138,
+    "points": 145915,
+    "km": 5154,
+    "bytes": 1505596,
+    "built": "2026-11-25T15:40:01.550Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-251-203",
@@ -573,7 +1031,17 @@
    "bytes": 14766659,
    "built": "2026-11-25T14:27:44.117Z",
    "minutes": 2.2,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 63,
+    "segments": 127535,
+    "points": 447117,
+    "km": 14339,
+    "bytes": 5431057,
+    "built": "2026-11-25T15:40:17.305Z",
+    "minutes": 0.3
+   }
   },
   {
    "key": "8-252-203",
@@ -586,7 +1054,17 @@
    "bytes": 20991372,
    "built": "2026-11-25T14:30:24.312Z",
    "minutes": 2.7,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 64,
+    "segments": 189521,
+    "points": 620702,
+    "km": 18395,
+    "bytes": 7764066,
+    "built": "2026-11-25T15:40:33.319Z",
+    "minutes": 0.3
+   }
   },
   {
    "key": "8-253-203",
@@ -599,7 +1077,17 @@
    "bytes": 15843201,
    "built": "2026-11-25T14:32:40.525Z",
    "minutes": 2.3,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 64,
+    "segments": 127571,
+    "points": 453721,
+    "km": 14236,
+    "bytes": 5489918,
+    "built": "2026-11-25T15:40:51.390Z",
+    "minutes": 0.3
+   }
   },
   {
    "key": "8-254-203",
@@ -612,7 +1100,17 @@
    "bytes": 19758769,
    "built": "2026-11-25T14:35:28.185Z",
    "minutes": 2.8,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 64,
+    "segments": 173115,
+    "points": 539460,
+    "km": 16055,
+    "bytes": 6875142,
+    "built": "2026-11-25T15:41:09.960Z",
+    "minutes": 0.3
+   }
   },
   {
    "key": "8-255-203",
@@ -625,7 +1123,17 @@
    "bytes": 7497847,
    "built": "2026-11-25T14:36:25.776Z",
    "minutes": 1,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 64,
+    "segments": 56941,
+    "points": 203227,
+    "km": 8138,
+    "bytes": 2378823,
+    "built": "2026-11-25T15:41:22.221Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-256-203",
@@ -638,7 +1146,17 @@
    "bytes": 3715736,
    "built": "2026-11-25T14:37:14.131Z",
    "minutes": 0.8,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 40,
+    "segments": 26004,
+    "points": 99337,
+    "km": 4089,
+    "bytes": 1102010,
+    "built": "2026-11-25T15:41:30.403Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-257-203",
@@ -651,7 +1169,17 @@
    "bytes": 2151921,
    "built": "2026-11-25T14:37:41.318Z",
    "minutes": 0.5,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 24,
+    "segments": 15511,
+    "points": 64165,
+    "km": 2722,
+    "bytes": 704810,
+    "built": "2026-11-25T15:41:38.731Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-258-203",
@@ -664,7 +1192,17 @@
    "bytes": 389966,
    "built": "2026-11-25T14:37:58.361Z",
    "minutes": 0.3,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 6,
+    "segments": 2510,
+    "points": 10748,
+    "km": 458,
+    "bytes": 118767,
+    "built": "2026-11-25T15:41:47.330Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-245-204",
@@ -677,7 +1215,17 @@
    "bytes": 3321088,
    "built": "2026-11-25T14:38:36.726Z",
    "minutes": 0.6,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 64,
+    "segments": 31252,
+    "points": 168310,
+    "km": 7921,
+    "bytes": 1691363,
+    "built": "2026-11-25T15:41:57.084Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-246-204",
@@ -690,7 +1238,17 @@
    "bytes": 5609907,
    "built": "2026-11-25T14:39:36.243Z",
    "minutes": 1,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 64,
+    "segments": 82761,
+    "points": 323770,
+    "km": 11081,
+    "bytes": 3528958,
+    "built": "2026-11-25T15:42:08.542Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-247-204",
@@ -703,7 +1261,17 @@
    "bytes": 2583307,
    "built": "2026-11-25T14:40:14.255Z",
    "minutes": 0.6,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 22,
+    "segments": 32391,
+    "points": 112430,
+    "km": 3223,
+    "bytes": 1309328,
+    "built": "2026-11-25T15:42:17.075Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-249-204",
@@ -716,7 +1284,17 @@
    "bytes": 324121,
    "built": "2026-11-25T14:40:32.249Z",
    "minutes": 0.3,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 6,
+    "segments": 2600,
+    "points": 10115,
+    "km": 315,
+    "bytes": 117363,
+    "built": "2026-11-25T15:42:24.620Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-251-204",
@@ -729,7 +1307,17 @@
    "bytes": 8917030,
    "built": "2026-11-25T14:41:42.825Z",
    "minutes": 1.2,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 26,
+    "segments": 68862,
+    "points": 205286,
+    "km": 6275,
+    "bytes": 2731808,
+    "built": "2026-11-25T15:42:36.185Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-252-204",
@@ -742,7 +1330,17 @@
    "bytes": 26839450,
    "built": "2026-11-25T14:45:19.327Z",
    "minutes": 3.6,
-   "commit": "01c2356"
+   "commit": "01c2356",
+   "roads": {
+    "state": "built",
+    "files": 64,
+    "segments": 255997,
+    "points": 764063,
+    "km": 21149,
+    "bytes": 10136344,
+    "built": "2026-11-25T15:42:57.166Z",
+    "minutes": 0.4
+   }
   },
   {
    "key": "8-253-204",
@@ -755,7 +1353,17 @@
    "bytes": 23858325,
    "built": "2026-11-25T14:49:30.759Z",
    "minutes": 3.8,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 64,
+    "segments": 215417,
+    "points": 674138,
+    "km": 18829,
+    "bytes": 8841976,
+    "built": "2026-11-25T15:43:13.590Z",
+    "minutes": 0.3
+   }
   },
   {
    "key": "8-254-204",
@@ -768,7 +1376,17 @@
    "bytes": 12802978,
    "built": "2026-11-25T14:51:18.683Z",
    "minutes": 1.8,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 64,
+    "segments": 100299,
+    "points": 333698,
+    "km": 11621,
+    "bytes": 4153508,
+    "built": "2026-11-25T15:43:26.089Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-255-204",
@@ -781,7 +1399,17 @@
    "bytes": 10592504,
    "built": "2026-11-25T14:52:53.650Z",
    "minutes": 1.6,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 61,
+    "segments": 72096,
+    "points": 240840,
+    "km": 8896,
+    "bytes": 2925650,
+    "built": "2026-11-25T15:43:36.444Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-256-204",
@@ -794,7 +1422,17 @@
    "bytes": 319644,
    "built": "2026-11-25T14:53:15.686Z",
    "minutes": 0.4,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 7,
+    "segments": 1599,
+    "points": 6932,
+    "km": 304,
+    "bytes": 73496,
+    "built": "2026-11-25T15:43:42.597Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-244-205",
@@ -807,7 +1445,17 @@
    "bytes": 1701611,
    "built": "2026-11-25T14:53:46.982Z",
    "minutes": 0.5,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 62,
+    "segments": 18524,
+    "points": 103565,
+    "km": 4808,
+    "bytes": 1019948,
+    "built": "2026-11-25T15:43:50.298Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-245-205",
@@ -820,7 +1468,17 @@
    "bytes": 4512859,
    "built": "2026-11-25T14:54:33.007Z",
    "minutes": 0.8,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 64,
+    "segments": 28035,
+    "points": 157830,
+    "km": 7762,
+    "bytes": 1576373,
+    "built": "2026-11-25T15:43:59.027Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-246-205",
@@ -833,7 +1491,17 @@
    "bytes": 6364162,
    "built": "2026-11-25T14:55:32.761Z",
    "minutes": 1,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 63,
+    "segments": 61656,
+    "points": 283667,
+    "km": 11403,
+    "bytes": 2977500,
+    "built": "2026-11-25T15:44:09.476Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-247-205",
@@ -846,7 +1514,17 @@
    "bytes": 11959560,
    "built": "2026-11-25T14:57:32.502Z",
    "minutes": 2,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 63,
+    "segments": 122776,
+    "points": 456202,
+    "km": 14671,
+    "bytes": 5276153,
+    "built": "2026-11-25T15:44:21.890Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-248-205",
@@ -859,7 +1537,17 @@
    "bytes": 773583,
    "built": "2026-11-25T14:57:53.934Z",
    "minutes": 0.4,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 16,
+    "segments": 7783,
+    "points": 34184,
+    "km": 1280,
+    "bytes": 368649,
+    "built": "2026-11-25T15:44:28.547Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-249-205",
@@ -872,7 +1560,17 @@
    "bytes": 1223029,
    "built": "2026-11-25T14:58:14.941Z",
    "minutes": 0.4,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 28,
+    "segments": 9520,
+    "points": 38680,
+    "km": 1487,
+    "bytes": 445462,
+    "built": "2026-11-25T15:44:36.588Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-250-205",
@@ -885,7 +1583,17 @@
    "bytes": 1053237,
    "built": "2026-11-25T14:58:35.312Z",
    "minutes": 0.3,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 11,
+    "segments": 7108,
+    "points": 26452,
+    "km": 907,
+    "bytes": 317279,
+    "built": "2026-11-25T15:44:44.160Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-251-205",
@@ -898,7 +1606,17 @@
    "bytes": 3789970,
    "built": "2026-11-25T14:59:09.338Z",
    "minutes": 0.6,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 62,
+    "segments": 27601,
+    "points": 131194,
+    "km": 5144,
+    "bytes": 1382859,
+    "built": "2026-11-25T15:44:52.618Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-252-205",
@@ -911,7 +1629,17 @@
    "bytes": 2712495,
    "built": "2026-11-25T14:59:41.201Z",
    "minutes": 0.5,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 63,
+    "segments": 20412,
+    "points": 102577,
+    "km": 4391,
+    "bytes": 1066755,
+    "built": "2026-11-25T15:45:00.770Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-253-205",
@@ -924,7 +1652,17 @@
    "bytes": 7978019,
    "built": "2026-11-25T15:00:46.873Z",
    "minutes": 1.1,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 64,
+    "segments": 58907,
+    "points": 219913,
+    "km": 8186,
+    "bytes": 2589000,
+    "built": "2026-11-25T15:45:11.101Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-254-205",
@@ -937,7 +1675,17 @@
    "bytes": 8400535,
    "built": "2026-11-25T15:01:52.831Z",
    "minutes": 1.1,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 51,
+    "segments": 67978,
+    "points": 226827,
+    "km": 7656,
+    "bytes": 2829240,
+    "built": "2026-11-25T15:45:20.709Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-255-205",
@@ -950,7 +1698,17 @@
    "bytes": 1644354,
    "built": "2026-11-25T15:02:23.527Z",
    "minutes": 0.5,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 20,
+    "segments": 11670,
+    "points": 44062,
+    "km": 1615,
+    "bytes": 513542,
+    "built": "2026-11-25T15:45:27.578Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-245-206",
@@ -963,7 +1721,17 @@
    "bytes": 3145986,
    "built": "2026-11-25T15:03:07.948Z",
    "minutes": 0.7,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 46,
+    "segments": 30024,
+    "points": 129464,
+    "km": 5264,
+    "bytes": 1390301,
+    "built": "2026-11-25T15:45:35.337Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-246-206",
@@ -976,7 +1744,17 @@
    "bytes": 3561987,
    "built": "2026-11-25T15:03:49.308Z",
    "minutes": 0.7,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 39,
+    "segments": 25609,
+    "points": 110199,
+    "km": 4937,
+    "bytes": 1204915,
+    "built": "2026-11-25T15:45:42.987Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-247-206",
@@ -989,7 +1767,17 @@
    "bytes": 1309228,
    "built": "2026-11-25T15:04:17.255Z",
    "minutes": 0.5,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 33,
+    "segments": 11977,
+    "points": 53187,
+    "km": 2264,
+    "bytes": 581755,
+    "built": "2026-11-25T15:45:53.176Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-248-206",
@@ -1002,7 +1790,17 @@
    "bytes": 468596,
    "built": "2026-11-25T15:04:39.017Z",
    "minutes": 0.4,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 21,
+    "segments": 3882,
+    "points": 19433,
+    "km": 863,
+    "bytes": 206584,
+    "built": "2026-11-25T15:46:00.241Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-249-206",
@@ -1015,7 +1813,17 @@
    "bytes": 2430519,
    "built": "2026-11-25T15:05:12.454Z",
    "minutes": 0.6,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 58,
+    "segments": 14881,
+    "points": 74182,
+    "km": 3449,
+    "bytes": 796926,
+    "built": "2026-11-25T15:46:08.650Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-250-206",
@@ -1028,7 +1836,17 @@
    "bytes": 1639709,
    "built": "2026-11-25T15:05:40.276Z",
    "minutes": 0.5,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 64,
+    "segments": 11405,
+    "points": 65747,
+    "km": 3323,
+    "bytes": 674949,
+    "built": "2026-11-25T15:46:18.231Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-251-206",
@@ -1041,7 +1859,17 @@
    "bytes": 2540658,
    "built": "2026-11-25T15:06:08.807Z",
    "minutes": 0.5,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 61,
+    "segments": 17978,
+    "points": 82131,
+    "km": 4128,
+    "bytes": 902439,
+    "built": "2026-11-25T15:46:25.591Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-252-206",
@@ -1054,7 +1882,17 @@
    "bytes": 1571683,
    "built": "2026-11-25T15:06:41.157Z",
    "minutes": 0.5,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 61,
+    "segments": 10782,
+    "points": 60459,
+    "km": 3084,
+    "bytes": 616208,
+    "built": "2026-11-25T15:46:39.667Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-253-206",
@@ -1067,7 +1905,17 @@
    "bytes": 12642813,
    "built": "2026-11-25T15:08:30.840Z",
    "minutes": 1.8,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 59,
+    "segments": 116455,
+    "points": 363850,
+    "km": 11546,
+    "bytes": 4677715,
+    "built": "2026-11-25T15:46:50.611Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-254-206",
@@ -1080,7 +1928,17 @@
    "bytes": 1229897,
    "built": "2026-11-25T15:08:52.885Z",
    "minutes": 0.4,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 2,
+    "segments": 8282,
+    "points": 22986,
+    "km": 650,
+    "bytes": 321209,
+    "built": "2026-11-25T15:46:58.378Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-246-207",
@@ -1093,7 +1951,17 @@
    "bytes": 55059,
    "built": "2026-11-25T15:09:10.193Z",
    "minutes": 0.3,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 7,
+    "segments": 451,
+    "points": 2324,
+    "km": 109,
+    "bytes": 25666,
+    "built": "2026-11-25T15:47:05.158Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-247-207",
@@ -1106,7 +1974,17 @@
    "bytes": 192357,
    "built": "2026-11-25T15:09:27.358Z",
    "minutes": 0.3,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 31,
+    "segments": 1752,
+    "points": 10138,
+    "km": 492,
+    "bytes": 107828,
+    "built": "2026-11-25T15:47:11.630Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-248-207",
@@ -1119,7 +1997,17 @@
    "bytes": 634092,
    "built": "2026-11-25T15:09:57.886Z",
    "minutes": 0.5,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 60,
+    "segments": 4351,
+    "points": 26943,
+    "km": 1303,
+    "bytes": 282139,
+    "built": "2026-11-25T15:47:21.512Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-249-207",
@@ -1132,7 +2020,17 @@
    "bytes": 11803515,
    "built": "2026-11-25T15:11:33.207Z",
    "minutes": 1.6,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 63,
+    "segments": 93620,
+    "points": 318590,
+    "km": 10343,
+    "bytes": 3964749,
+    "built": "2026-11-25T15:47:32.736Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-250-207",
@@ -1145,7 +2043,17 @@
    "bytes": 12006771,
    "built": "2026-11-25T15:13:22.126Z",
    "minutes": 1.8,
-   "commit": "2ec8026"
+   "commit": "2ec8026",
+   "roads": {
+    "state": "built",
+    "files": 64,
+    "segments": 108762,
+    "points": 368719,
+    "km": 11902,
+    "bytes": 4585057,
+    "built": "2026-11-25T15:47:44.641Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-251-207",
@@ -1158,7 +2066,17 @@
    "bytes": 9920565,
    "built": "2026-11-25T15:15:07.733Z",
    "minutes": 1.4,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 59,
+    "segments": 85452,
+    "points": 283587,
+    "km": 8941,
+    "bytes": 3539023,
+    "built": "2026-11-25T15:47:56.101Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-252-207",
@@ -1171,7 +2089,17 @@
    "bytes": 2410769,
    "built": "2026-11-25T15:15:39.800Z",
    "minutes": 0.5,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 47,
+    "segments": 19443,
+    "points": 80680,
+    "km": 3607,
+    "bytes": 899451,
+    "built": "2026-11-25T15:48:04.511Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-253-207",
@@ -1184,7 +2112,17 @@
    "bytes": 735868,
    "built": "2026-11-25T15:15:59.817Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 13,
+    "segments": 4440,
+    "points": 19278,
+    "km": 928,
+    "bytes": 214108,
+    "built": "2026-11-25T15:48:13.427Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-245-208",
@@ -1197,7 +2135,17 @@
    "bytes": 30683,
    "built": "2026-11-25T15:16:17.988Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 1,
+    "segments": 77,
+    "points": 422,
+    "km": 16,
+    "bytes": 4453,
+    "built": "2026-11-25T15:48:20.293Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-246-208",
@@ -1210,7 +2158,17 @@
    "bytes": 88947,
    "built": "2026-11-25T15:16:41.192Z",
    "minutes": 0.4,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 15,
+    "segments": 650,
+    "points": 3650,
+    "km": 181,
+    "bytes": 39852,
+    "built": "2026-11-25T15:48:27.212Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-247-208",
@@ -1223,7 +2181,17 @@
    "bytes": 217617,
    "built": "2026-11-25T15:16:59.598Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 51,
+    "segments": 1942,
+    "points": 16402,
+    "km": 760,
+    "bytes": 159616,
+    "built": "2026-11-25T15:48:35.904Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-248-208",
@@ -1236,7 +2204,17 @@
    "bytes": 666453,
    "built": "2026-11-25T15:17:19.474Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 54,
+    "segments": 6511,
+    "points": 37899,
+    "km": 1475,
+    "bytes": 385799,
+    "built": "2026-11-25T15:48:42.968Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-249-208",
@@ -1249,7 +2227,17 @@
    "bytes": 216349,
    "built": "2026-11-25T15:17:39.278Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 50,
+    "segments": 1295,
+    "points": 12187,
+    "km": 619,
+    "bytes": 121000,
+    "built": "2026-11-25T15:48:50.796Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-250-208",
@@ -1262,7 +2250,17 @@
    "bytes": 1107274,
    "built": "2026-11-25T15:18:02.006Z",
    "minutes": 0.4,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 57,
+    "segments": 7650,
+    "points": 45625,
+    "km": 2117,
+    "bytes": 460329,
+    "built": "2026-11-25T15:48:58.156Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-251-208",
@@ -1275,7 +2273,17 @@
    "bytes": 4845762,
    "built": "2026-11-25T15:18:45.855Z",
    "minutes": 0.7,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 60,
+    "segments": 38005,
+    "points": 143438,
+    "km": 5746,
+    "bytes": 1688481,
+    "built": "2026-11-25T15:49:06.934Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-252-208",
@@ -1288,7 +2296,17 @@
    "bytes": 2072779,
    "built": "2026-11-25T15:19:15.622Z",
    "minutes": 0.5,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 34,
+    "segments": 14319,
+    "points": 58050,
+    "km": 2788,
+    "bytes": 660683,
+    "built": "2026-11-25T15:49:18.913Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-245-209",
@@ -1301,7 +2319,17 @@
    "bytes": 174241,
    "built": "2026-11-25T15:19:33.334Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 27,
+    "segments": 4120,
+    "points": 17410,
+    "km": 679,
+    "bytes": 192023,
+    "built": "2026-11-25T15:49:25.959Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-246-209",
@@ -1314,7 +2342,17 @@
    "bytes": 109863,
    "built": "2026-11-25T15:19:50.359Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 20,
+    "segments": 2985,
+    "points": 14383,
+    "km": 461,
+    "bytes": 150694,
+    "built": "2026-11-25T15:49:32.586Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-247-209",
@@ -1327,7 +2365,17 @@
    "bytes": 248055,
    "built": "2026-11-25T15:20:08.403Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 50,
+    "segments": 5010,
+    "points": 25332,
+    "km": 866,
+    "bytes": 270221,
+    "built": "2026-11-25T15:49:39.789Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-248-209",
@@ -1340,7 +2388,17 @@
    "bytes": 159367,
    "built": "2026-11-25T15:20:29.894Z",
    "minutes": 0.4,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 49,
+    "segments": 1042,
+    "points": 10744,
+    "km": 558,
+    "bytes": 106275,
+    "built": "2026-11-25T15:49:46.789Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-249-209",
@@ -1353,7 +2411,17 @@
    "bytes": 1172586,
    "built": "2026-11-25T15:20:55.467Z",
    "minutes": 0.4,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 61,
+    "segments": 10966,
+    "points": 52562,
+    "km": 2215,
+    "bytes": 568786,
+    "built": "2026-11-25T15:49:55.061Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-250-209",
@@ -1366,7 +2434,17 @@
    "bytes": 1598093,
    "built": "2026-11-25T15:21:28.181Z",
    "minutes": 0.5,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 52,
+    "segments": 14409,
+    "points": 60957,
+    "km": 2491,
+    "bytes": 686133,
+    "built": "2026-11-25T15:50:03.025Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-251-209",
@@ -1379,7 +2457,17 @@
    "bytes": 1355326,
    "built": "2026-11-25T15:21:53.523Z",
    "minutes": 0.4,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 57,
+    "segments": 9858,
+    "points": 50416,
+    "km": 2471,
+    "bytes": 536498,
+    "built": "2026-11-25T15:50:11.412Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-252-209",
@@ -1392,7 +2480,17 @@
    "bytes": 5291146,
    "built": "2026-11-25T15:22:45.137Z",
    "minutes": 0.9,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 63,
+    "segments": 42300,
+    "points": 171709,
+    "km": 7402,
+    "bytes": 1938193,
+    "built": "2026-11-25T15:50:21.325Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-253-209",
@@ -1405,7 +2503,17 @@
    "bytes": 1937117,
    "built": "2026-11-25T15:23:14.512Z",
    "minutes": 0.5,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 19,
+    "segments": 14752,
+    "points": 53577,
+    "km": 2156,
+    "bytes": 635409,
+    "built": "2026-11-25T15:50:28.979Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-245-210",
@@ -1418,7 +2526,17 @@
    "bytes": 61308,
    "built": "2026-11-25T15:23:29.914Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 11,
+    "segments": 444,
+    "points": 2075,
+    "km": 77,
+    "bytes": 24602,
+    "built": "2026-11-25T15:50:36.002Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-246-210",
@@ -1431,7 +2549,17 @@
    "bytes": 345789,
    "built": "2026-11-25T15:23:48.699Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 42,
+    "segments": 7169,
+    "points": 29525,
+    "km": 958,
+    "bytes": 328721,
+    "built": "2026-11-25T15:50:44.023Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-247-210",
@@ -1444,7 +2572,17 @@
    "bytes": 128996,
    "built": "2026-11-25T15:24:11.528Z",
    "minutes": 0.4,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 15,
+    "segments": 2898,
+    "points": 10679,
+    "km": 327,
+    "bytes": 122942,
+    "built": "2026-11-25T15:50:51.959Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-248-210",
@@ -1457,7 +2595,17 @@
    "bytes": 182692,
    "built": "2026-11-25T15:24:28.183Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 42,
+    "segments": 1920,
+    "points": 13337,
+    "km": 581,
+    "bytes": 135750,
+    "built": "2026-11-25T15:50:58.816Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-249-210",
@@ -1470,7 +2618,17 @@
    "bytes": 300062,
    "built": "2026-11-25T15:24:46.558Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 49,
+    "segments": 2607,
+    "points": 16905,
+    "km": 915,
+    "bytes": 177772,
+    "built": "2026-11-25T15:51:06.938Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-250-210",
@@ -1483,7 +2641,17 @@
    "bytes": 546753,
    "built": "2026-11-25T15:25:06.844Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 39,
+    "segments": 4907,
+    "points": 24378,
+    "km": 1267,
+    "bytes": 267015,
+    "built": "2026-11-25T15:51:16.458Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-251-210",
@@ -1496,7 +2664,17 @@
    "bytes": 604515,
    "built": "2026-11-25T15:25:31.007Z",
    "minutes": 0.4,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 16,
+    "segments": 5074,
+    "points": 17624,
+    "km": 724,
+    "bytes": 218127,
+    "built": "2026-11-25T15:51:24.131Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-252-210",
@@ -1509,7 +2687,17 @@
    "bytes": 286843,
    "built": "2026-11-25T15:25:52.740Z",
    "minutes": 0.4,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 8,
+    "segments": 1897,
+    "points": 7290,
+    "km": 297,
+    "bytes": 87227,
+    "built": "2026-11-25T15:51:32.615Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-253-210",
@@ -1522,7 +2710,17 @@
    "bytes": 280105,
    "built": "2026-11-25T15:26:11.367Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 3,
+    "segments": 1483,
+    "points": 4879,
+    "km": 191,
+    "bytes": 62169,
+    "built": "2026-11-25T15:51:39.275Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-246-211",
@@ -1535,7 +2733,17 @@
    "bytes": 35611,
    "built": "2026-11-25T15:26:30.167Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 4,
+    "segments": 389,
+    "points": 1225,
+    "km": 50,
+    "bytes": 16037,
+    "built": "2026-11-25T15:51:45.957Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-247-211",
@@ -1548,7 +2756,17 @@
    "bytes": 42155,
    "built": "2026-11-25T15:26:49.243Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 3,
+    "segments": 642,
+    "points": 2066,
+    "km": 65,
+    "bytes": 25219,
+    "built": "2026-11-25T15:51:53.612Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-248-211",
@@ -1561,7 +2779,17 @@
    "bytes": 50020,
    "built": "2026-11-25T15:27:05.697Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 8,
+    "segments": 228,
+    "points": 1732,
+    "km": 71,
+    "bytes": 18210,
+    "built": "2026-11-25T15:52:00.283Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-249-211",
@@ -1574,7 +2802,17 @@
    "bytes": 80485,
    "built": "2026-11-25T15:27:22.324Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 19,
+    "segments": 539,
+    "points": 5145,
+    "km": 274,
+    "bytes": 50972,
+    "built": "2026-11-25T15:52:07.433Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-250-211",
@@ -1587,7 +2825,17 @@
    "bytes": 269401,
    "built": "2026-11-25T15:27:42.073Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 18,
+    "segments": 1730,
+    "points": 8204,
+    "km": 432,
+    "bytes": 94012,
+    "built": "2026-11-25T15:52:14.822Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-251-211",
@@ -1600,7 +2848,17 @@
    "bytes": 1011738,
    "built": "2026-11-25T15:28:08.219Z",
    "minutes": 0.4,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 49,
+    "segments": 9878,
+    "points": 37657,
+    "km": 1869,
+    "bytes": 443656,
+    "built": "2026-11-25T15:52:22.981Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-252-211",
@@ -1613,7 +2871,17 @@
    "bytes": 53877,
    "built": "2026-11-25T15:28:25.687Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 3,
+    "segments": 298,
+    "points": 1199,
+    "km": 64,
+    "bytes": 14222,
+    "built": "2026-11-25T15:52:31.856Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-251-212",
@@ -1626,7 +2894,17 @@
    "bytes": 194361,
    "built": "2026-11-25T15:28:47.287Z",
    "minutes": 0.4,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 17,
+    "segments": 1934,
+    "points": 8355,
+    "km": 398,
+    "bytes": 94095,
+    "built": "2026-11-25T15:52:42.752Z",
+    "minutes": 0.2
+   }
   },
   {
    "key": "8-252-212",
@@ -1639,7 +2917,17 @@
    "bytes": 129044,
    "built": "2026-11-25T15:29:05.306Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 10,
+    "segments": 707,
+    "points": 3102,
+    "km": 206,
+    "bytes": 35999,
+    "built": "2026-11-25T15:52:50.246Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-253-213",
@@ -1652,7 +2940,17 @@
    "bytes": 66084,
    "built": "2026-11-25T15:29:21.425Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 12,
+    "segments": 584,
+    "points": 4143,
+    "km": 201,
+    "bytes": 41743,
+    "built": "2026-11-25T15:52:57.598Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-254-213",
@@ -1665,7 +2963,17 @@
    "bytes": 441756,
    "built": "2026-11-25T15:29:41.141Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 27,
+    "segments": 4711,
+    "points": 22248,
+    "km": 910,
+    "bytes": 239275,
+    "built": "2026-11-25T15:53:05.143Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-253-214",
@@ -1678,7 +2986,17 @@
    "bytes": 32663,
    "built": "2026-11-25T15:29:57.324Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 3,
+    "segments": 131,
+    "points": 878,
+    "km": 44,
+    "bytes": 9334,
+    "built": "2026-11-25T15:53:11.630Z",
+    "minutes": 0.1
+   }
   },
   {
    "key": "8-254-214",
@@ -1691,7 +3009,17 @@
    "bytes": 109070,
    "built": "2026-11-25T15:30:13.326Z",
    "minutes": 0.3,
-   "commit": "e1f5e63"
+   "commit": "e1f5e63",
+   "roads": {
+    "state": "built",
+    "files": 21,
+    "segments": 1254,
+    "points": 6629,
+    "km": 337,
+    "bytes": 72311,
+    "built": "2026-11-25T15:53:18.539Z",
+    "minutes": 0.1
+   }
   }
  ]
 }
