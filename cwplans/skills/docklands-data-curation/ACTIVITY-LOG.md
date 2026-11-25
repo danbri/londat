@@ -3864,3 +3864,7 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   repositories moglob-1.1 (Great Britain south) and moglob-1.2 (north), Pages on through the org secret; tile index
   cwplans/docklands/data/cells/index.json (129 cells); driver cwplans/tools/populate-cells.mjs; Overture 2026-11-18.0
   (2026-09-23.1 gone). Page switch ?cells=1 (Penzance tested cross-origin, no errors). Population running: moglob-1.1, then 1.2.
+- 2026-11-25, owner's screenshots near Eastergate: "Missing roads? Building default textures remain bad"; then "(C)
+  please" (the look first, then roads). Pitched roofs by rule on house-sized compact boxes (all compact-box sets; ?roofs=0
+  for flat; the card says the roof is not measured). Roads: build-cell-roads.mjs (OSM via Overture transportation, per
+  level-11 cell), populate-cells --roads, two line layers with ?cells=1; the roads run waits for the moglob-1.2 buildings.

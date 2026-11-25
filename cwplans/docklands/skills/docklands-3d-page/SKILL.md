@@ -3598,6 +3598,40 @@ buildings per country from the Overture Parquet footers only, about 1 minute for
   takes a lock (`cwplans/data/raw/populate-cells.lock`, the pid; a second run exits 3). Look for a running job with
   `pgrep -af <name>` or `ps -ww`, and read the task's own status, never a cut `ps` line.
 
+## Three.js port: pitched roofs on house-sized compact boxes (2026-11-25)
+
+Owner, 2026-11-25, with phone screenshots of the cells near Eastergate: "Building default textures remain bad". Measured
+first (leaf tiles round Eastergate, boxes under 200 m2): heights were not the cause (GHSL median 3.0 m, Microsoft 4.2 m,
+0 to 1 % at 7.5 m or more); every box had a flat roof colour and a flat top. Now (places.js `compactInto`, place-look.js
+`blockFacts(..., pitched)`):
+- A compact box of kind `buildings` under `HOUSE_M2` 200 m2 and at most `HOUSE_H` 12 m (the "house" style rule of
+  blockFacts) keeps its walls to the eaves and gets a gabled prism (`UNIT_GABLE`, ridge along the long side), roof height
+  min(0.45 h, short side / 2 x tan 35 degrees), at least 1 m; the record's height stays the top. The roofs are a second
+  instanced primitive `roofs` with `inst.map` (instance -> box record): blockInstAttrs seeds the facts by the record, so
+  walls and roof match; a tap maps `instanceId` through `mesh.__instMap`. The material needs no change: a slope of 35
+  degrees or less has |n.y| >= 0.82 > 0.42, so it takes the roof colour (rcol, from `roof_pitched` weights); gables are walls.
+- The card has a row "Roof: pitched ... drawn by a rule ... not measured" (O4: realism measured, not guessed).
+- Applies to every compact-box set: the cells, Greater London and the UK lite set. `?roofs=0` gives flat boxes as before.
+- Cost (software WebGL, 390 x 700): Eastergate 300 m 8,420 roofs of 24,221 instances, cell triangles 124,652 -> 175,172;
+  York 1.1 km (UK lite) 62,084 roofs, 1.32 M place triangles (was about 1 M). No page errors (BT Tower default, York,
+  Eastergate with ?cells=1).
+- Open: walls of houses still use the facade grid of the "house" style.
+
+### Roads of the building cells (2026-11-25)
+
+Owner, 2026-11-25: "Missing roads?" Outside the model and the places the UK had only the skeleton's Zoomstack motorways and
+A roads. Tool `cwplans/tools/build-cell-roads.mjs --cell 8-x-y --out <repo>/data/roads` (Overture transportation segments,
+subtype road, classes motorway to pedestrian; footways, paths, tracks, cycleways, steps left out; Douglas-Peucker 2 m;
+1e-5 degree; one file per level-11 cell by bbox middle, format cell-roads-1; summary `8-x-y.json` with the input hash).
+Driver `populate-cells.mjs --roads` (the index entry gets `roads`). Page (?cells=1): places.js `addCellRoads` adds two cell
+layers through `G.addCellLayer` (major below 12 km, streets below 6 km; `levels: [[alt, 11]]`; both read one decoded file
+per level-11 cell, an LRU of 200); lines on `G.heightAt` + 2 m (globe.js buildLines). Test cell 8-255-200: 144,544
+segments, 484,746 points (971,958 before simplification), 51 files, 5.73 MB, 1.7 s (the fetch 19 s); about a third of the
+cell's buildings. Lines are one pixel wide (no road surface width yet). The straight imagery edge in the owner's
+screenshot at 0.703 W is a level-8 quadtree edge of the imagery tiles (the cells use the same tree), not a cell fault.
+Trap (2026-11-25): a command `git pull --rebase && python3 edit && git commit` lost the skill edit when the pull failed
+on unstaged files, and the commit that followed held only the page files: check `git show --stat` after each commit.
+
 ## Three.js port: the UK lite set (2026-10-22)
 
 Owner, 2026-10-22, about buildings for the whole UK: "can we pick a lite subset or slice somehow? Key landmarks, modest
