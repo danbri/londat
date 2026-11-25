@@ -1,9 +1,9 @@
 {
  "format": "cells-index-1",
- "about": "The building cells of the worldwide building layer (issue https://github.com/danbri/londat/issues/20): one entry per cell of the geodetic quadtree (level 8, 0.703125 degrees; x from 180 W, y from 90 S), the repository that serves it and, once built, what it holds. Written by cwplans/tools/populate-cells.mjs; the cells are built by cwplans/tools/build-cell-tiles.mjs (tier london: the Greater London parameters, credit per set, sparse leaves of 2,000 buildings, buildings in the Docklands model box left to the model). Plan of 2026-11-25: every level-8 cell that touches the UK (Natural Earth polygon plus 0.02 degree), est_records from the Overture 2026-09-23.1 Parquet footers (docs/scale-estimate.md); a cell holds every building whose centroid is in it, also in Ireland or France.",
+ "about": "The building cells of the worldwide building layer (issue https://github.com/danbri/londat/issues/20): one entry per cell of the geodetic quadtree (level 8, 0.703125 degrees; x from 180 W, y from 90 S), the repository that serves it and, once built, what it holds. Written by cwplans/tools/populate-cells.mjs; the cells are built by cwplans/tools/build-cell-tiles.mjs (tier london: the Greater London parameters, credit per set, sparse leaves of 2,000 buildings, buildings in the Docklands model box left to the model). Plan of 2026-11-25: every level-8 cell that touches the UK (Natural Earth polygon plus 0.02 degree), est_records from the Overture 2026-09-23.1 Parquet footers (docs/scale-estimate.md); the cells are built from release 2026-11-18.0 (2026-09-23.1 was gone from the bucket on 2026-11-25); a cell holds every building whose centroid is in it, also in Ireland or France.",
  "level": 8,
  "tier": "london",
- "release": "2026-09-23.1",
+ "release": "2026-11-18.0",
  "repos": {
   "moglob-1.1": "https://moglob.github.io/moglob-1.1/data/cells/",
   "moglob-1.2": "https://moglob.github.io/moglob-1.2/data/cells/"

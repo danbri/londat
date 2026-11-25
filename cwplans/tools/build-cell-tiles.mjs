@@ -32,6 +32,9 @@ const TIERS = { london: 'london' };
 // --sparse <n>: a node coarser than the leaf level holding at most n buildings is a leaf (fewer, larger tiles where
 // buildings are sparse; the fixed cost of a tile is about 3 kB); 0 = every leaf at level 13 (the London set)
 const SPARSE = +(argOf('sparse') ?? 2000);
+// --release <Overture release>: the Overture bucket keeps only the newest releases (2026-09-23.1, the release of the London
+// and UK lite sets, was gone on 2026-11-25), so the cells name their own release
+const RELEASE = argOf('release') || '2026-11-18.0';
 // --exclude <ids>: regions whose model draws its own buildings (comma-separated; default docklands: a building whose centroid
 // is 1 m or more inside the Docklands model box is left to the model, the Greater London rule); --exclude none for no mask
 const EXCLUDE = (argOf('exclude') || 'docklands') === 'none' ? [] : (argOf('exclude') || 'docklands').split(',');
@@ -57,7 +60,7 @@ export default {
     heights: london.place.heights, default_height_m: london.place.default_height_m,
     blocks: { ...london.place.blocks, ground_fallback: 'world-texture', sparse_leaf_n: ${SPARSE}, credit_per_set: true },
   },
-  adapters: london.adapters,
+  adapters: london.adapters.map(a => a.outer ? { ...a, outer: { ...a.outer, release: ${JSON.stringify(RELEASE)} } } : a),
 };
 `;
 const regFile = join(raw, 'region.mjs'); writeFileSync(regFile, src);

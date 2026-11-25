@@ -1240,7 +1240,9 @@ const blocksRaw = () => join(RAWD, `overture-${BK.query}-${ovB().outer.release}.
 async function fetchBlocks() {
   const ov = ovB(), Q = { ...ov.outer.queries[BK.query], ...(BK.columns ? { columns: BK.columns } : {}), ...(BK.where != null ? { where: BK.where } : {}) }, f = blocksRaw();
   if (!existsSync(f) || flag('--refetch')) { const bb = QBOX.map(v => v.toFixed(2)); execFileSync(process.env[ov.outer.python] || 'python3', ['-I', join(CW, '..', ov.outer.script), ov.outer.release, Q.theme, Q.type, ...bb, f, Q.columns, Q.where], { stdio: 'inherit' }); }
-  if (!flog['overture-buildings'] || flag('--refetch')) { const M = JSON.parse(readFileSync(f + '.meta.json', 'utf8')), st = statSync(f);
+  // (also when the raw file is another one: a new Overture release gives a new file name; 2026-11-25 the record of the
+  // old release stayed beside the new answer)
+  if (!flog['overture-buildings'] || flog['overture-buildings'].file !== rel(f) || flag('--refetch')) { const M = JSON.parse(readFileSync(f + '.meta.json', 'utf8')), st = statSync(f);
     flog['overture-buildings'] = { url: `s3://overturemaps-us-west-2/release/${M.release}/theme=${M.theme}/type=${M.type}/ (bbox ${M.bbox.join(',')}; files ${M.files_read.join(' ')})`, fetched: new Date(st.mtimeMs).toISOString(), bytes: st.size, sha256: await shaFile(f), file: rel(f),
       source: 'overture-buildings', request: `DuckDB read_parquet over HTTPS of the ${M.files_listed} files of the release, filter on bbox and: ${M.where}; columns ${M.columns.join(', ')}; rows ordered by id, one JSON object a line (fetch-overture-theme.py, .ndjson)`,
       records: M.rows_count, licence: ov.licence, as_fetched: { note: 'the query answer as written by cwplans/tools/fetch-overture-theme.py (raw folder, NDJSON); sha256 above' } }; saveFlog(); }

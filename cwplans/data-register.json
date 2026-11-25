@@ -368,8 +368,8 @@
    "fetched_by": "tools/build-place-tiles.mjs fetch --region uk-lite (4522 rows; issue #14: structures drawn as landmarks, castle sites as rows)"
   },
   "overture-osm-cells": {
-   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=buildings/type=building/ (one bounding box per level-8 quadtree cell, 0.703125 degrees, of the tile index docklands/data/cells/index.json)",
-   "osm_data_as_of": "Overture release 2026-09-23.1 (its OSM snapshot, 2026-09-06)",
+   "url": "s3://overturemaps-us-west-2/release/2026-11-18.0/theme=buildings/type=building/ (one bounding box per level-8 quadtree cell, 0.703125 degrees, of the tile index docklands/data/cells/index.json)",
+   "osm_data_as_of": "Overture release 2026-11-18.0 (its OSM snapshot)",
    "fetched": "2026-11-25",
    "size_bytes": null,
    "committed": false,
@@ -16370,7 +16370,7 @@
     "extract": [
      "overture-osm-cells"
     ],
-    "what": "outlines, names, heights and levels of OSM buildings (via Overture 2026-09-23.1)"
+    "what": "outlines, names, heights and levels of OSM buildings (via Overture 2026-11-18.0)"
    },
    "produced_by": "tools/populate-cells.mjs with tools/build-cell-tiles.mjs and tools/build-place-tiles.mjs (operations place-select-blocks, place-city-heights, place-blocks)",
    "fetched": "2026-11-25",
@@ -16407,7 +16407,7 @@
     "extract": [
      "overture-osm-cells"
     ],
-    "what": "outlines, names, heights and levels of OSM buildings (via Overture 2026-09-23.1)"
+    "what": "outlines, names, heights and levels of OSM buildings (via Overture 2026-11-18.0)"
    },
    "produced_by": "tools/populate-cells.mjs with tools/build-cell-tiles.mjs and tools/build-place-tiles.mjs (operations place-select-blocks, place-city-heights, place-blocks)",
    "fetched": "2026-11-25",
