@@ -941,14 +941,15 @@
    "minutes": 1.7,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 64,
     "segments": 97325,
     "points": 349506,
     "km": 11876,
     "bytes": 4022395,
     "built": "2026-11-25T15:39:24.938Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -964,14 +965,15 @@
    "minutes": 0.7,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 29,
     "segments": 31714,
     "points": 114542,
     "km": 4118,
     "bytes": 1338963,
     "built": "2026-11-25T15:39:40.217Z",
-    "minutes": 0.3
+    "minutes": 0.3,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -987,14 +989,15 @@
    "minutes": 0.5,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 36,
     "segments": 16980,
     "points": 83998,
     "km": 3324,
     "bytes": 863927,
     "built": "2026-11-25T15:39:49.924Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1010,14 +1013,15 @@
    "minutes": 0.7,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 56,
     "segments": 29138,
     "points": 145915,
     "km": 5154,
     "bytes": 1505596,
     "built": "2026-11-25T15:40:01.550Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1033,14 +1037,15 @@
    "minutes": 2.2,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 63,
     "segments": 127535,
     "points": 447117,
     "km": 14339,
     "bytes": 5431057,
     "built": "2026-11-25T15:40:17.305Z",
-    "minutes": 0.3
+    "minutes": 0.3,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1056,14 +1061,15 @@
    "minutes": 2.7,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 64,
     "segments": 189521,
     "points": 620702,
     "km": 18395,
     "bytes": 7764066,
     "built": "2026-11-25T15:40:33.319Z",
-    "minutes": 0.3
+    "minutes": 0.3,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1079,14 +1085,15 @@
    "minutes": 2.3,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 64,
     "segments": 127571,
     "points": 453721,
     "km": 14236,
     "bytes": 5489918,
     "built": "2026-11-25T15:40:51.390Z",
-    "minutes": 0.3
+    "minutes": 0.3,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1102,14 +1109,15 @@
    "minutes": 2.8,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 64,
     "segments": 173115,
     "points": 539460,
     "km": 16055,
     "bytes": 6875142,
     "built": "2026-11-25T15:41:09.960Z",
-    "minutes": 0.3
+    "minutes": 0.3,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1125,14 +1133,15 @@
    "minutes": 1,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 64,
     "segments": 56941,
     "points": 203227,
     "km": 8138,
     "bytes": 2378823,
     "built": "2026-11-25T15:41:22.221Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1148,14 +1157,15 @@
    "minutes": 0.8,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 40,
     "segments": 26004,
     "points": 99337,
     "km": 4089,
     "bytes": 1102010,
     "built": "2026-11-25T15:41:30.403Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1171,14 +1181,15 @@
    "minutes": 0.5,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 24,
     "segments": 15511,
     "points": 64165,
     "km": 2722,
     "bytes": 704810,
     "built": "2026-11-25T15:41:38.731Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1194,14 +1205,15 @@
    "minutes": 0.3,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 6,
     "segments": 2510,
     "points": 10748,
     "km": 458,
     "bytes": 118767,
     "built": "2026-11-25T15:41:47.330Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1217,14 +1229,15 @@
    "minutes": 0.6,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 64,
     "segments": 31252,
     "points": 168310,
     "km": 7921,
     "bytes": 1691363,
     "built": "2026-11-25T15:41:57.084Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1240,14 +1253,15 @@
    "minutes": 1,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 64,
     "segments": 82761,
     "points": 323770,
     "km": 11081,
     "bytes": 3528958,
     "built": "2026-11-25T15:42:08.542Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1263,14 +1277,15 @@
    "minutes": 0.6,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 22,
     "segments": 32391,
     "points": 112430,
     "km": 3223,
     "bytes": 1309328,
     "built": "2026-11-25T15:42:17.075Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1286,14 +1301,15 @@
    "minutes": 0.3,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 6,
     "segments": 2600,
     "points": 10115,
     "km": 315,
     "bytes": 117363,
     "built": "2026-11-25T15:42:24.620Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1309,14 +1325,15 @@
    "minutes": 1.2,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 26,
     "segments": 68862,
     "points": 205286,
     "km": 6275,
     "bytes": 2731808,
     "built": "2026-11-25T15:42:36.185Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1332,14 +1349,15 @@
    "minutes": 3.6,
    "commit": "01c2356",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 64,
     "segments": 255997,
     "points": 764063,
     "km": 21149,
     "bytes": 10136344,
     "built": "2026-11-25T15:42:57.166Z",
-    "minutes": 0.4
+    "minutes": 0.4,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1355,14 +1373,15 @@
    "minutes": 3.8,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 64,
     "segments": 215417,
     "points": 674138,
     "km": 18829,
     "bytes": 8841976,
     "built": "2026-11-25T15:43:13.590Z",
-    "minutes": 0.3
+    "minutes": 0.3,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1378,14 +1397,15 @@
    "minutes": 1.8,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 64,
     "segments": 100299,
     "points": 333698,
     "km": 11621,
     "bytes": 4153508,
     "built": "2026-11-25T15:43:26.089Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1401,14 +1421,15 @@
    "minutes": 1.6,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 61,
     "segments": 72096,
     "points": 240840,
     "km": 8896,
     "bytes": 2925650,
     "built": "2026-11-25T15:43:36.444Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1424,14 +1445,15 @@
    "minutes": 0.4,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 7,
     "segments": 1599,
     "points": 6932,
     "km": 304,
     "bytes": 73496,
     "built": "2026-11-25T15:43:42.597Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1447,14 +1469,15 @@
    "minutes": 0.5,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 62,
     "segments": 18524,
     "points": 103565,
     "km": 4808,
     "bytes": 1019948,
     "built": "2026-11-25T15:43:50.298Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1470,14 +1493,15 @@
    "minutes": 0.8,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 64,
     "segments": 28035,
     "points": 157830,
     "km": 7762,
     "bytes": 1576373,
     "built": "2026-11-25T15:43:59.027Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1493,14 +1517,15 @@
    "minutes": 1,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 63,
     "segments": 61656,
     "points": 283667,
     "km": 11403,
     "bytes": 2977500,
     "built": "2026-11-25T15:44:09.476Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1516,14 +1541,15 @@
    "minutes": 2,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 63,
     "segments": 122776,
     "points": 456202,
     "km": 14671,
     "bytes": 5276153,
     "built": "2026-11-25T15:44:21.890Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1539,14 +1565,15 @@
    "minutes": 0.4,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 16,
     "segments": 7783,
     "points": 34184,
     "km": 1280,
     "bytes": 368649,
     "built": "2026-11-25T15:44:28.547Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1562,14 +1589,15 @@
    "minutes": 0.4,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 28,
     "segments": 9520,
     "points": 38680,
     "km": 1487,
     "bytes": 445462,
     "built": "2026-11-25T15:44:36.588Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1585,14 +1613,15 @@
    "minutes": 0.3,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 11,
     "segments": 7108,
     "points": 26452,
     "km": 907,
     "bytes": 317279,
     "built": "2026-11-25T15:44:44.160Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1608,14 +1637,15 @@
    "minutes": 0.6,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 62,
     "segments": 27601,
     "points": 131194,
     "km": 5144,
     "bytes": 1382859,
     "built": "2026-11-25T15:44:52.618Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1631,14 +1661,15 @@
    "minutes": 0.5,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 63,
     "segments": 20412,
     "points": 102577,
     "km": 4391,
     "bytes": 1066755,
     "built": "2026-11-25T15:45:00.770Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1654,14 +1685,15 @@
    "minutes": 1.1,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 64,
     "segments": 58907,
     "points": 219913,
     "km": 8186,
     "bytes": 2589000,
     "built": "2026-11-25T15:45:11.101Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1677,14 +1709,15 @@
    "minutes": 1.1,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 51,
     "segments": 67978,
     "points": 226827,
     "km": 7656,
     "bytes": 2829240,
     "built": "2026-11-25T15:45:20.709Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1700,14 +1733,15 @@
    "minutes": 0.5,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 20,
     "segments": 11670,
     "points": 44062,
     "km": 1615,
     "bytes": 513542,
     "built": "2026-11-25T15:45:27.578Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1723,14 +1757,15 @@
    "minutes": 0.7,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 46,
     "segments": 30024,
     "points": 129464,
     "km": 5264,
     "bytes": 1390301,
     "built": "2026-11-25T15:45:35.337Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1746,14 +1781,15 @@
    "minutes": 0.7,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 39,
     "segments": 25609,
     "points": 110199,
     "km": 4937,
     "bytes": 1204915,
     "built": "2026-11-25T15:45:42.987Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1769,14 +1805,15 @@
    "minutes": 0.5,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 33,
     "segments": 11977,
     "points": 53187,
     "km": 2264,
     "bytes": 581755,
     "built": "2026-11-25T15:45:53.176Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1792,14 +1829,15 @@
    "minutes": 0.4,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 21,
     "segments": 3882,
     "points": 19433,
     "km": 863,
     "bytes": 206584,
     "built": "2026-11-25T15:46:00.241Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1815,14 +1853,15 @@
    "minutes": 0.6,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 58,
     "segments": 14881,
     "points": 74182,
     "km": 3449,
     "bytes": 796926,
     "built": "2026-11-25T15:46:08.650Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1838,14 +1877,15 @@
    "minutes": 0.5,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 64,
     "segments": 11405,
     "points": 65747,
     "km": 3323,
     "bytes": 674949,
     "built": "2026-11-25T15:46:18.231Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1861,14 +1901,15 @@
    "minutes": 0.5,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 61,
     "segments": 17978,
     "points": 82131,
     "km": 4128,
     "bytes": 902439,
     "built": "2026-11-25T15:46:25.591Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1884,14 +1925,15 @@
    "minutes": 0.5,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 61,
     "segments": 10782,
     "points": 60459,
     "km": 3084,
     "bytes": 616208,
     "built": "2026-11-25T15:46:39.667Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1907,14 +1949,15 @@
    "minutes": 1.8,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 59,
     "segments": 116455,
     "points": 363850,
     "km": 11546,
     "bytes": 4677715,
     "built": "2026-11-25T15:46:50.611Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1930,14 +1973,15 @@
    "minutes": 0.4,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 2,
     "segments": 8282,
     "points": 22986,
     "km": 650,
     "bytes": 321209,
     "built": "2026-11-25T15:46:58.378Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1953,14 +1997,15 @@
    "minutes": 0.3,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 7,
     "segments": 451,
     "points": 2324,
     "km": 109,
     "bytes": 25666,
     "built": "2026-11-25T15:47:05.158Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1976,14 +2021,15 @@
    "minutes": 0.3,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 31,
     "segments": 1752,
     "points": 10138,
     "km": 492,
     "bytes": 107828,
     "built": "2026-11-25T15:47:11.630Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -1999,14 +2045,15 @@
    "minutes": 0.5,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 60,
     "segments": 4351,
     "points": 26943,
     "km": 1303,
     "bytes": 282139,
     "built": "2026-11-25T15:47:21.512Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2022,14 +2069,15 @@
    "minutes": 1.6,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 63,
     "segments": 93620,
     "points": 318590,
     "km": 10343,
     "bytes": 3964749,
     "built": "2026-11-25T15:47:32.736Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2045,14 +2093,15 @@
    "minutes": 1.8,
    "commit": "2ec8026",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 64,
     "segments": 108762,
     "points": 368719,
     "km": 11902,
     "bytes": 4585057,
     "built": "2026-11-25T15:47:44.641Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2068,14 +2117,15 @@
    "minutes": 1.4,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 59,
     "segments": 85452,
     "points": 283587,
     "km": 8941,
     "bytes": 3539023,
     "built": "2026-11-25T15:47:56.101Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2091,14 +2141,15 @@
    "minutes": 0.5,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 47,
     "segments": 19443,
     "points": 80680,
     "km": 3607,
     "bytes": 899451,
     "built": "2026-11-25T15:48:04.511Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2114,14 +2165,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 13,
     "segments": 4440,
     "points": 19278,
     "km": 928,
     "bytes": 214108,
     "built": "2026-11-25T15:48:13.427Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2137,14 +2189,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 1,
     "segments": 77,
     "points": 422,
     "km": 16,
     "bytes": 4453,
     "built": "2026-11-25T15:48:20.293Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2160,14 +2213,15 @@
    "minutes": 0.4,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 15,
     "segments": 650,
     "points": 3650,
     "km": 181,
     "bytes": 39852,
     "built": "2026-11-25T15:48:27.212Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2183,14 +2237,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 51,
     "segments": 1942,
     "points": 16402,
     "km": 760,
     "bytes": 159616,
     "built": "2026-11-25T15:48:35.904Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2206,14 +2261,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 54,
     "segments": 6511,
     "points": 37899,
     "km": 1475,
     "bytes": 385799,
     "built": "2026-11-25T15:48:42.968Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2229,14 +2285,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 50,
     "segments": 1295,
     "points": 12187,
     "km": 619,
     "bytes": 121000,
     "built": "2026-11-25T15:48:50.796Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2252,14 +2309,15 @@
    "minutes": 0.4,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 57,
     "segments": 7650,
     "points": 45625,
     "km": 2117,
     "bytes": 460329,
     "built": "2026-11-25T15:48:58.156Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2275,14 +2333,15 @@
    "minutes": 0.7,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 60,
     "segments": 38005,
     "points": 143438,
     "km": 5746,
     "bytes": 1688481,
     "built": "2026-11-25T15:49:06.934Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2298,14 +2357,15 @@
    "minutes": 0.5,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 34,
     "segments": 14319,
     "points": 58050,
     "km": 2788,
     "bytes": 660683,
     "built": "2026-11-25T15:49:18.913Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2321,14 +2381,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 27,
     "segments": 4120,
     "points": 17410,
     "km": 679,
     "bytes": 192023,
     "built": "2026-11-25T15:49:25.959Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2344,14 +2405,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 20,
     "segments": 2985,
     "points": 14383,
     "km": 461,
     "bytes": 150694,
     "built": "2026-11-25T15:49:32.586Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2367,14 +2429,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 50,
     "segments": 5010,
     "points": 25332,
     "km": 866,
     "bytes": 270221,
     "built": "2026-11-25T15:49:39.789Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2390,14 +2453,15 @@
    "minutes": 0.4,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 49,
     "segments": 1042,
     "points": 10744,
     "km": 558,
     "bytes": 106275,
     "built": "2026-11-25T15:49:46.789Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2413,14 +2477,15 @@
    "minutes": 0.4,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 61,
     "segments": 10966,
     "points": 52562,
     "km": 2215,
     "bytes": 568786,
     "built": "2026-11-25T15:49:55.061Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2436,14 +2501,15 @@
    "minutes": 0.5,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 52,
     "segments": 14409,
     "points": 60957,
     "km": 2491,
     "bytes": 686133,
     "built": "2026-11-25T15:50:03.025Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2459,14 +2525,15 @@
    "minutes": 0.4,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 57,
     "segments": 9858,
     "points": 50416,
     "km": 2471,
     "bytes": 536498,
     "built": "2026-11-25T15:50:11.412Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2482,14 +2549,15 @@
    "minutes": 0.9,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 63,
     "segments": 42300,
     "points": 171709,
     "km": 7402,
     "bytes": 1938193,
     "built": "2026-11-25T15:50:21.325Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2505,14 +2573,15 @@
    "minutes": 0.5,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 19,
     "segments": 14752,
     "points": 53577,
     "km": 2156,
     "bytes": 635409,
     "built": "2026-11-25T15:50:28.979Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2528,14 +2597,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 11,
     "segments": 444,
     "points": 2075,
     "km": 77,
     "bytes": 24602,
     "built": "2026-11-25T15:50:36.002Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2551,14 +2621,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 42,
     "segments": 7169,
     "points": 29525,
     "km": 958,
     "bytes": 328721,
     "built": "2026-11-25T15:50:44.023Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2574,14 +2645,15 @@
    "minutes": 0.4,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 15,
     "segments": 2898,
     "points": 10679,
     "km": 327,
     "bytes": 122942,
     "built": "2026-11-25T15:50:51.959Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2597,14 +2669,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 42,
     "segments": 1920,
     "points": 13337,
     "km": 581,
     "bytes": 135750,
     "built": "2026-11-25T15:50:58.816Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2620,14 +2693,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 49,
     "segments": 2607,
     "points": 16905,
     "km": 915,
     "bytes": 177772,
     "built": "2026-11-25T15:51:06.938Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2643,14 +2717,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 39,
     "segments": 4907,
     "points": 24378,
     "km": 1267,
     "bytes": 267015,
     "built": "2026-11-25T15:51:16.458Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2666,14 +2741,15 @@
    "minutes": 0.4,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 16,
     "segments": 5074,
     "points": 17624,
     "km": 724,
     "bytes": 218127,
     "built": "2026-11-25T15:51:24.131Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2689,14 +2765,15 @@
    "minutes": 0.4,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 8,
     "segments": 1897,
     "points": 7290,
     "km": 297,
     "bytes": 87227,
     "built": "2026-11-25T15:51:32.615Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2712,14 +2789,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 3,
     "segments": 1483,
     "points": 4879,
     "km": 191,
     "bytes": 62169,
     "built": "2026-11-25T15:51:39.275Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2735,14 +2813,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 4,
     "segments": 389,
     "points": 1225,
     "km": 50,
     "bytes": 16037,
     "built": "2026-11-25T15:51:45.957Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2758,14 +2837,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 3,
     "segments": 642,
     "points": 2066,
     "km": 65,
     "bytes": 25219,
     "built": "2026-11-25T15:51:53.612Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2781,14 +2861,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 8,
     "segments": 228,
     "points": 1732,
     "km": 71,
     "bytes": 18210,
     "built": "2026-11-25T15:52:00.283Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2804,14 +2885,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 19,
     "segments": 539,
     "points": 5145,
     "km": 274,
     "bytes": 50972,
     "built": "2026-11-25T15:52:07.433Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2827,14 +2909,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 18,
     "segments": 1730,
     "points": 8204,
     "km": 432,
     "bytes": 94012,
     "built": "2026-11-25T15:52:14.822Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2850,14 +2933,15 @@
    "minutes": 0.4,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 49,
     "segments": 9878,
     "points": 37657,
     "km": 1869,
     "bytes": 443656,
     "built": "2026-11-25T15:52:22.981Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2873,14 +2957,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 3,
     "segments": 298,
     "points": 1199,
     "km": 64,
     "bytes": 14222,
     "built": "2026-11-25T15:52:31.856Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2896,14 +2981,15 @@
    "minutes": 0.4,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 17,
     "segments": 1934,
     "points": 8355,
     "km": 398,
     "bytes": 94095,
     "built": "2026-11-25T15:52:42.752Z",
-    "minutes": 0.2
+    "minutes": 0.2,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2919,14 +3005,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 10,
     "segments": 707,
     "points": 3102,
     "km": 206,
     "bytes": 35999,
     "built": "2026-11-25T15:52:50.246Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2942,14 +3029,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 12,
     "segments": 584,
     "points": 4143,
     "km": 201,
     "bytes": 41743,
     "built": "2026-11-25T15:52:57.598Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2965,14 +3053,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 27,
     "segments": 4711,
     "points": 22248,
     "km": 910,
     "bytes": 239275,
     "built": "2026-11-25T15:53:05.143Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -2988,14 +3077,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 3,
     "segments": 131,
     "points": 878,
     "km": 44,
     "bytes": 9334,
     "built": "2026-11-25T15:53:11.630Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   },
   {
@@ -3011,14 +3101,15 @@
    "minutes": 0.3,
    "commit": "e1f5e63",
    "roads": {
-    "state": "built",
+    "state": "published",
     "files": 21,
     "segments": 1254,
     "points": 6629,
     "km": 337,
     "bytes": 72311,
     "built": "2026-11-25T15:53:18.539Z",
-    "minutes": 0.1
+    "minutes": 0.1,
+    "commit": "bbcdab3"
    }
   }
  ]
