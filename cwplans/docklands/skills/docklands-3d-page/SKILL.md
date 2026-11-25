@@ -3629,6 +3629,15 @@ per level-11 cell, an LRU of 200); lines on `G.heightAt` + 2 m (globe.js buildLi
 segments, 484,746 points (971,958 before simplification), 51 files, 5.73 MB, 1.7 s (the fetch 19 s); about a third of the
 cell's buildings. Lines are one pixel wide (no road surface width yet). The straight imagery edge in the owner's
 screenshot at 0.703 W is a level-8 quadtree edge of the imagery tiles (the cells use the same tree), not a cell fault.
+- **At their width (2026-11-25; owner: "real width please").** `docklands/globe/road-ribbons.js` `buildRibbons`: one
+  mesh per level-11 cell, triangle strips by class (`WIDTH`: motorway 14, trunk 11, primary 9, secondary 8, tertiary 7,
+  unclassified and residential 5.5, living street 4.5, pedestrian 4, service 3.5 m; typical, not measured), densified to
+  15 m on `G.heightAt`, 0.4 m up, log depth x 0.997 and polygon offset, asphalt by class, MeshStandard (the place's sun).
+  globe.js `addCellLayer({ build })` makes a layer's own meshes; `userData.rebuild(heightAt)` redraws them on new ground
+  (`G.onBaseDem`). Below `RIBBON_ALT` 2,500 m the ribbon layer draws all classes and the line layers stop
+  (`style.minAlt`). Checked headless at Eastergate 300 m and 1.5 km: no page errors.
+- **Architecture.** Base layers by cell and extras as packages (a JSON-LD registry, declared replacement, cell cards,
+  Google Earth Enterprise lessons, where each London layer goes): https://github.com/danbri/londat/blob/main/docs/cell-architecture.md
 Trap (2026-11-25): a command `git pull --rebase && python3 edit && git commit` lost the skill edit when the pull failed
 on unstaged files, and the commit that followed held only the page files: check `git show --stat` after each commit.
 
