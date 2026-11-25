@@ -46,133 +46,287 @@
    "key": "8-249-199",
    "repo": "moglob-1.1",
    "est_records": 180795,
-   "state": "planned"
+   "state": "published",
+   "buildings": 95206,
+   "named": 113,
+   "tiles": 165,
+   "bytes": 3051496,
+   "built": "2026-11-25T13:04:09.134Z",
+   "minutes": 0.6,
+   "commit": "34d8466"
   },
   {
    "key": "8-250-199",
    "repo": "moglob-1.1",
    "est_records": 158982,
-   "state": "planned"
+   "state": "published",
+   "buildings": 213962,
+   "named": 431,
+   "tiles": 229,
+   "bytes": 5924999,
+   "built": "2026-11-25T13:05:10.252Z",
+   "minutes": 1,
+   "commit": "34d8466"
   },
   {
    "key": "8-251-199",
    "repo": "moglob-1.1",
    "est_records": 17607,
-   "state": "planned"
+   "state": "published",
+   "buildings": 21963,
+   "named": 13,
+   "tiles": 28,
+   "bytes": 639291,
+   "built": "2026-11-25T13:05:33.424Z",
+   "minutes": 0.4,
+   "commit": "34d8466"
   },
   {
    "key": "8-252-199",
    "repo": "moglob-1.1",
    "est_records": 31876,
-   "state": "planned"
+   "state": "published",
+   "buildings": 18231,
+   "named": 35,
+   "tiles": 22,
+   "bytes": 552098,
+   "built": "2026-11-25T13:05:53.772Z",
+   "minutes": 0.3,
+   "commit": "34d8466"
   },
   {
    "key": "8-253-199",
    "repo": "moglob-1.1",
    "est_records": 97872,
-   "state": "planned"
+   "state": "published",
+   "buildings": 6995,
+   "named": 3,
+   "tiles": 9,
+   "bytes": 180301,
+   "built": "2026-11-25T13:06:14.180Z",
+   "minutes": 0.3,
+   "commit": "34d8466"
   },
   {
    "key": "8-254-199",
    "repo": "moglob-1.1",
    "est_records": 78075,
-   "state": "planned"
+   "state": "published",
+   "buildings": 6201,
+   "named": 0,
+   "tiles": 14,
+   "bytes": 187384,
+   "built": "2026-11-25T13:06:32.733Z",
+   "minutes": 0.3,
+   "commit": "34d8466"
   },
   {
    "key": "8-249-200",
    "repo": "moglob-1.1",
    "est_records": 40274,
-   "state": "planned"
+   "state": "published",
+   "buildings": 48529,
+   "named": 36,
+   "tiles": 69,
+   "bytes": 1752573,
+   "built": "2026-11-25T13:07:04.917Z",
+   "minutes": 0.5,
+   "commit": "34d8466"
   },
   {
    "key": "8-250-200",
    "repo": "moglob-1.1",
    "est_records": 169744,
-   "state": "planned"
+   "state": "published",
+   "buildings": 128787,
+   "named": 158,
+   "tiles": 192,
+   "bytes": 4780720,
+   "built": "2026-11-25T13:07:51.745Z",
+   "minutes": 0.8,
+   "commit": "34d8466"
   },
   {
    "key": "8-251-200",
    "repo": "moglob-1.1",
    "est_records": 362904,
-   "state": "planned"
+   "state": "published",
+   "buildings": 309502,
+   "named": 411,
+   "tiles": 393,
+   "bytes": 8964536,
+   "built": "2026-11-25T13:09:19.015Z",
+   "minutes": 1.5,
+   "commit": "34d8466"
   },
   {
    "key": "8-252-200",
    "repo": "moglob-1.1",
    "est_records": 333888,
-   "state": "planned"
+   "state": "published",
+   "buildings": 268989,
+   "named": 317,
+   "tiles": 412,
+   "bytes": 9207603,
+   "built": "2026-11-25T13:10:37.305Z",
+   "minutes": 1.3,
+   "commit": "34d8466"
   },
   {
    "key": "8-253-200",
    "repo": "moglob-1.1",
    "est_records": 407187,
-   "state": "planned"
+   "state": "published",
+   "buildings": 408275,
+   "named": 811,
+   "tiles": 408,
+   "bytes": 10588203,
+   "built": "2026-11-25T13:12:26.728Z",
+   "minutes": 1.8,
+   "commit": "34d8466"
   },
   {
    "key": "8-254-200",
    "repo": "moglob-1.1",
    "est_records": 514254,
-   "state": "planned"
+   "state": "published",
+   "buildings": 529708,
+   "named": 1284,
+   "tiles": 571,
+   "bytes": 15634155,
+   "built": "2026-11-25T13:14:42.087Z",
+   "minutes": 2.3,
+   "commit": "34d8466"
   },
   {
    "key": "8-255-200",
    "repo": "moglob-1.1",
    "est_records": 592540,
-   "state": "planned"
+   "state": "published",
+   "buildings": 610172,
+   "named": 1191,
+   "tiles": 586,
+   "bytes": 16303495,
+   "built": "2026-11-25T13:17:14.975Z",
+   "minutes": 2.5,
+   "commit": "34d8466"
   },
   {
    "key": "8-256-200",
    "repo": "moglob-1.1",
    "est_records": 370570,
-   "state": "planned"
+   "state": "published",
+   "buildings": 392730,
+   "named": 606,
+   "tiles": 469,
+   "bytes": 10681790,
+   "built": "2026-11-25T13:18:43.303Z",
+   "minutes": 1.5,
+   "commit": "34d8466"
   },
   {
    "key": "8-257-200",
    "repo": "moglob-1.1",
    "est_records": 216022,
-   "state": "planned"
+   "state": "published",
+   "buildings": 211018,
+   "named": 336,
+   "tiles": 252,
+   "bytes": 5449174,
+   "built": "2026-11-25T13:19:35.799Z",
+   "minutes": 0.9,
+   "commit": "34d8466"
   },
   {
    "key": "8-258-200",
    "repo": "moglob-1.1",
    "est_records": 265425,
-   "state": "planned"
+   "state": "published",
+   "buildings": 174506,
+   "named": 247,
+   "tiles": 217,
+   "bytes": 4810481,
+   "built": "2026-11-25T13:20:23.877Z",
+   "minutes": 0.8,
+   "commit": "34d8466"
   },
   {
    "key": "8-248-201",
    "repo": "moglob-1.1",
    "est_records": 40241,
-   "state": "planned"
+   "state": "published",
+   "buildings": 38408,
+   "named": 31,
+   "tiles": 63,
+   "bytes": 1568305,
+   "built": "2026-11-25T13:20:47.961Z",
+   "minutes": 0.4,
+   "commit": "34d8466"
   },
   {
    "key": "8-249-201",
    "repo": "moglob-1.1",
    "est_records": 122079,
-   "state": "planned"
+   "state": "published",
+   "buildings": 87505,
+   "named": 53,
+   "tiles": 150,
+   "bytes": 2856746,
+   "built": "2026-11-25T13:21:20.207Z",
+   "minutes": 0.5,
+   "commit": "34d8466"
   },
   {
    "key": "8-250-201",
    "repo": "moglob-1.1",
    "est_records": 240267,
-   "state": "planned"
+   "state": "published",
+   "buildings": 253975,
+   "named": 402,
+   "tiles": 341,
+   "bytes": 7903429,
+   "built": "2026-11-25T13:22:30.545Z",
+   "minutes": 1.2,
+   "commit": "34d8466"
   },
   {
    "key": "8-251-201",
    "repo": "moglob-1.1",
    "est_records": 532773,
-   "state": "planned"
+   "state": "published",
+   "buildings": 528196,
+   "named": 876,
+   "tiles": 538,
+   "bytes": 15151043,
+   "built": "2026-11-25T13:24:22.155Z",
+   "minutes": 1.9,
+   "commit": "34d8466"
   },
   {
    "key": "8-252-201",
    "repo": "moglob-1.1",
    "est_records": 776042,
-   "state": "planned"
+   "state": "published",
+   "buildings": 695609,
+   "named": 1323,
+   "tiles": 614,
+   "bytes": 16918854,
+   "built": "2026-11-25T13:26:50.952Z",
+   "minutes": 2.5,
+   "commit": "34d8466"
   },
   {
    "key": "8-253-201",
    "repo": "moglob-1.1",
    "est_records": 369609,
-   "state": "planned"
+   "state": "published",
+   "buildings": 356929,
+   "named": 628,
+   "tiles": 392,
+   "bytes": 9732443,
+   "built": "2026-11-25T13:28:15.299Z",
+   "minutes": 1.4,
+   "commit": "34d8466"
   },
   {
    "key": "8-254-201",
