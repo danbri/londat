@@ -330,6 +330,141 @@ export function buildingMaterial() {
   return m;
 }
 
+// Houses of a place's compact boxes (owner, 2026-11-25: "walls that looks plausible and varied and real"; skill
+// docklands-3d-page, "Three.js port: house walls on compact boxes"). Only the city-block material of the places
+// (placeBuildingMaterial with inst.bx) calls these: the model's buildings and the places' core tiles keep lookWall.
+// A box instance carries bx = (cos, sin of its turn about y, half its long side, half its short side); with gk (centre,
+// ground, top = the eaves) the fragment knows its wall (long or gable end, which side), the metres along that wall from its
+// left end and the height over the ground. The facade is then laid out per building (seeded by the building's centre):
+// storeys of about 2.6 m from the eaves height, bays of 2.3 to 3.4 m, windows of one of four kinds (single portrait sash,
+// paired casements, wide post-war, small cottage), frames, sills, lintels, a door on the ground floor of one long side, a
+// plinth, a wall finish by the material code (rcol.a: 1 render, 2 brick, 3 stone, 4 pebble-dash, 5 tile-hung upper floors
+// on brick, 6 weatherboard), an up-and-over door on garages, no windows on sheds. Every fine part fades to its mean when
+// it is under a pixel (HW: the metres per pixel along the wall and up).
+// the wall frame of a box fragment (before any branch: it holds the derivatives); S: placeBuildingMaterial's src()
+function houseFrame(S, gk, bx, rcolA) {
+  const d = S.pl.xz.sub(gk.xy), c = bx.x, s = bx.y, hl = bx.z, hs = bx.w, nL = S.nL;
+  const lx = d.x.mul(c).sub(d.y.mul(s)), lz = d.x.mul(s).add(d.y.mul(c));   // the box frame: x along the long side
+  const nx = nL.x.mul(c).sub(nL.z.mul(s)), nz = nL.x.mul(s).add(nL.z.mul(c));
+  const long = step(abs(nx), abs(nz)), sz = select(nz.greaterThan(0), float(1), float(-1)), sx = select(nx.greaterThan(0), float(1), float(-1));
+  const Lw = select(long.greaterThan(0.5), hl.mul(2), hs.mul(2));
+  const a = clamp(select(long.greaterThan(0.5), lx.mul(sz).add(hl), lz.mul(sx).negate().add(hs)), 0, Lw);
+  const top = gk.w.sub(floor(gk.w.div(1000).add(0.001)).mul(1000)), y = S.wy.sub(gk.z), E = max(top.sub(gk.z), 0.1);
+  const side = select(long.greaterThan(0.5), sz, sx.mul(2));   // +-1 the long walls, +-2 the gable ends
+  return { a, Lw, y, E, side, long, area: hl.mul(hs).mul(4), mat: floor(rcolA.mul(255).add(0.5)), HW: fwidth(vec2(a, y)) };
+}
+const eqH = (a, v) => step(abs(a.sub(v)), 0.5);   // 1 where a equals v (a node; v a node or a number)
+// the layout of a house wall: the storey, the bay, the window, the door (no derivatives: X holds them)
+function houseLayout(K, X) {
+  const { sd } = K, { a, Lw, y, E, side, long, area, HW } = X;
+  const px = max(HW.x, HW.y), fw = clamp(px.mul(0.8), 0.07, 0.22);   // metres a pixel; a frame stays at least about a pixel wide until the window is a few pixels
+  const r = k => h(vec2(sd.mul(1.731).add(k * 0.113), sd.mul(0.377).add(k * 0.619)));   // per building, 0..1, k: which
+  const shed = max(step(area, 25), step(E, 1.5));   // a garden shed, a garage, a low outbuilding: no windows
+  const nS = clamp(floor(E.div(2.62).add(0.35)), 1, 3), fh = E.div(nS);
+  const fl = clamp(floor(y.div(fh)), 0, nS.sub(1)), yf = y.sub(fl.mul(fh));
+  // dwellings along a long wall: one (detached), two (a semi-detached pair) or a terrace, 5 to 7.5 m a unit; every other
+  // unit mirrored (handed pairs: the doors side by side or apart); then the unit's bays
+  const nu = select(long.greaterThan(0.5), max(1, floor(Lw.div(r(16).mul(2.5).add(5)).add(0.3))), float(1)), uL = Lw.div(nu);
+  const ui = clamp(floor(a.div(uL)), 0, nu.sub(1)), a0 = a.sub(ui.mul(uL)), au = select(mod(ui, 2).greaterThan(0.5), uL.sub(a0), a0);
+  const nb = max(1, floor(uL.div(r(1).mul(1.1).add(2.3)).add(0.35))), bl = uL.div(nb);
+  const bi = clamp(floor(au.div(bl)), 0, nb.sub(1)), ax = au.sub(bi.add(0.5).mul(bl));
+  // the kind of window, by building: 40 % single portrait (sash), 22 % paired casements, 26 % wide (post-war), 12 % small (cottage)
+  const v = r(2), vP = step(0.40, v).mul(step(v, 0.62)), vW = step(0.62, v).mul(step(v, 0.88)), vC = step(0.88, v), vS = float(1).sub(vP).sub(vW).sub(vC);
+  const r3 = r(3), r4 = r(4);
+  let ww = vS.mul(r3.mul(0.3).add(0.82)).add(vP.mul(1.3)).add(vW.mul(r3.mul(0.5).add(1.55))).add(vC.mul(0.75));
+  let wh = vS.mul(r4.mul(0.25).add(1.32)).add(vP.mul(r4.mul(0.15).add(1.2))).add(vW.mul(1.12)).add(vC.mul(0.98));
+  ww = min(select(long.greaterThan(0.5), ww, float(0.7)), bl.mul(0.72)); const sb = min(float(0.92).sub(eqH(fl, 0).mul(0.1)), fh.mul(0.3)), hw = ww.mul(0.5);   // (low walls, a common height in the data: smaller windows, lower sills)
+  wh = min(min(select(long.greaterThan(0.5), wh, float(1.0)), fh.mul(0.56)), fh.sub(sb).sub(0.3));
+  const dh = min(2.05, fh.mul(0.9));   // the door's height
+  // a gable end: one small window on some storeys (by side and storey), else a blank wall
+  const gwin = select(long.greaterThan(0.5), float(1), step(h(vec2(fl.add(side.mul(3.7)), sd.mul(5.3))), 0.45));
+  const has = float(1).sub(shed).mul(gwin).mul(step(y, E)).mul(step(0.5, wh));
+  // the door: the front (one long side, by building), the ground floor, one bay; a window in the other bays
+  const front = long.mul(eqH(side, select(r(5).lessThan(0.5), float(1), float(-1))));
+  const isDB = front.mul(eqH(bi, min(floor(r(6).mul(nb)), nb.sub(1)))).mul(eqH(fl, 0)).mul(float(1).sub(shed));
+  const doff = r(7).sub(0.5).mul(max(0, bl.sub(1.3))), dx = abs(ax.sub(doff));
+  const door = isDB.mul(step(dx, 0.46)).mul(step(y, dh)), dfr = isDB.mul(step(dx, fw.add(0.46))).mul(step(y, dh.add(fw))).mul(float(1).sub(door));
+  const fan = door.mul(step(dh.mul(0.87), y)).mul(step(dx, 0.4));   // the fanlight or the door's glass
+  const wOn = has.mul(float(1).sub(isDB)), inX = step(abs(ax), hw), inY = step(sb, yf).mul(step(yf, sb.add(wh)));
+  const mull = vP.mul(long).mul(step(abs(ax), 0.05)), rail = vS.mul(step(r(8), 0.55)).mul(step(abs(yf.sub(sb.add(wh.mul(0.56)))), 0.035));
+  const glass = wOn.mul(inX).mul(inY).mul(float(1).sub(mull)).mul(float(1).sub(rail));
+  const frame = wOn.mul(step(abs(ax), hw.add(fw))).mul(step(sb.sub(fw.mul(0.3)), yf)).mul(step(yf, sb.add(wh).add(fw))).sub(glass);
+  const frameP = max(frame, 0);
+  const sill = wOn.mul(step(abs(ax), hw.add(fw.add(0.03)))).mul(step(sb.sub(fw.mul(1.4)), yf)).mul(step(yf, sb.sub(fw.mul(0.3))));
+  const lint = wOn.mul(step(abs(ax), hw.add(0.12))).mul(step(sb.add(wh).add(0.07), yf)).mul(step(yf, sb.add(wh).add(0.25)));
+  // garages (14 to 45 m2, low): an up-and-over door on one long side
+  const gar = shed.mul(step(14, area)).mul(step(area, 45)).mul(step(E, 3.2)).mul(front).mul(step(abs(a.sub(Lw.mul(0.5))), 1.15)).mul(step(y, 2.0));
+  const cov = wOn.mul(ww.mul(wh)).div(bl.mul(fh)).mul(select(long.greaterThan(0.5), float(1), float(0.45)));   // the windows' share of the wall (far: the mean)
+  return { px, fl, fh, bi, ui, ax, yf, sb, wh, dh, glass, frame: frameP, sill, lint, door, dfr, fan, gar, cov, isDB, doff, shed, r };
+}
+// a house wall by day (sRGB albedo, before light)
+function houseWall(K, X) {
+  const { sd, base } = K, { a, y, mat, HW } = X, P = houseLayout(K, X), { r } = P;
+  const px = P.px, det = float(1).sub(smoothstep(0.25, 0.45, px)), far = smoothstep(0.5, 1.3, px), fine = float(1).sub(smoothstep(0.012, 0.035, px));
+  const c = vec3(base).toVar();
+  const isB = max(eqH(mat, 2), eqH(mat, 5)), isS = eqH(mat, 3), isP = eqH(mat, 4), isW = eqH(mat, 6);
+  // brick: 65 mm courses with 10 mm joints (75 mm), 215 mm bricks in stretcher bond; each brick its own shade; far: the mean with the mortar
+  const row = floor(y.div(0.075)), bq = vec2(a.div(0.225).add(mod(row, 2).mul(0.5)), y.div(0.075)), bf = fract(bq);
+  const mort = max(float(1).sub(step(0.05, bf.x)), float(1).sub(step(0.14, bf.y)));
+  const bv = h(vec2(floor(bq.x), row).add(sd.mul(7.1))), MORT = vec3(0.70, 0.67, 0.61);
+  const brick = mix(mix(c.mul(bv.mul(0.3).add(0.85)), MORT.mul(K.lum.mul(0.4).add(0.75)), mort), mix(c, MORT, 0.17), float(1).sub(fine));
+  // stone: courses of 0.3 m, blocks 0.4 to 0.9 m
+  const srow = floor(y.div(0.3)), sq = vec2(a.div(0.62).add(h(vec2(srow, sd)).mul(0.9)), y.div(0.3)), sf = fract(sq);
+  const smort = max(float(1).sub(step(0.025, sf.x)), float(1).sub(step(0.06, sf.y)));
+  const stone = mix(mix(c.mul(h(floor(sq).add(sd.mul(3.3))).mul(0.16).add(0.92)), c.mul(1.12), smort), c.mul(1.0), smoothstep(0.03, 0.09, px));
+  // pebble-dash: a speckle of stones; render: a slow mottle; weatherboard: 0.18 m boards, a shadow under each
+  const peb = mix(c.mul(h(floor(vec2(a, y).mul(28)).add(sd)).mul(0.2).add(0.9)), c, float(1).sub(fine));
+  const board = c.mul(float(1).sub(step(fract(y.div(0.18)), 0.12).mul(0.25).mul(det)));
+  c.assign(select(isB.greaterThan(0.5), brick, select(isS.greaterThan(0.5), stone, select(isP.greaterThan(0.5), peb, select(isW.greaterThan(0.5), board, c)))));
+  c.mulAssign(float(1).add(vn(vec2(a.mul(0.4), y.mul(0.6)).add(sd.mul(50))).sub(0.5).mul(0.08)));   // weathering
+  // tile-hung upper storeys (on brick): clay tiles in 0.1 m courses
+  const tileC = vec3(0.55, 0.30, 0.21).mul(r(12).mul(0.25).add(0.85)), tq = vec2(a.div(0.165).add(mod(floor(y.div(0.1)), 2).mul(0.5)), y.div(0.1)), tf = fract(tq);
+  const tile = mix(tileC.mul(h(floor(tq).add(sd)).mul(0.22).add(0.86)).mul(float(1).sub(step(0.82, tf.y).mul(0.3))), tileC.mul(0.92), float(1).sub(fine));
+  c.assign(mix(c, tile, eqH(mat, 5).mul(step(P.fh, y)).mul(step(y, X.E))));
+  // plinth: engineering brick or a painted band under the render
+  c.assign(mix(c, select(isB.greaterThan(0.5), c.mul(0.7), mix(c.mul(0.6), vec3(0.38, 0.37, 0.35), 0.6)), step(y, 0.32)));
+  // the window's surround: lintel (a soldier course or stone), sill, frame (white uPVC 70 %, else dark or brown)
+  const frameC = select(r(9).lessThan(0.7), vec3(0.86, 0.86, 0.84), select(r(10).lessThan(0.5), vec3(0.15, 0.15, 0.15), vec3(0.32, 0.23, 0.16)));
+  const lintC = select(isB.greaterThan(0.5).and(r(11).lessThan(0.6)), c.mul(0.78), vec3(0.76, 0.73, 0.67));
+  c.assign(mix(c, lintC, P.lint.mul(det).mul(max(isB, isS))));
+  c.assign(mix(c, select(isB.add(isS).greaterThan(0.5), vec3(0.78, 0.76, 0.71), frameC), P.sill.mul(det)));
+  c.assign(mix(c, frameC, P.frame.mul(det).add(P.cov.mul(0.35).mul(far))));
+  // the door: a colour by building (black, navy, red, green, white, oak, grey), glass at the top; its frame
+  const dc = h(vec2(P.ui.mul(1.37).add(r(13)), sd.mul(0.71))), doorC = select(dc.lessThan(0.18), vec3(0.07, 0.07, 0.08), select(dc.lessThan(0.32), vec3(0.10, 0.14, 0.26), select(dc.lessThan(0.46), vec3(0.45, 0.10, 0.10),
+    select(dc.lessThan(0.58), vec3(0.12, 0.25, 0.17), select(dc.lessThan(0.76), vec3(0.85, 0.85, 0.82), select(dc.lessThan(0.9), vec3(0.42, 0.28, 0.16), vec3(0.32, 0.34, 0.36)))))));
+  c.assign(mix(c, doorC, P.door.mul(float(1).sub(far.mul(0.6)))));
+  c.assign(mix(c, frameC, P.dfr.mul(det)));
+  c.assign(mix(c, mix(vec3(0.82, 0.82, 0.80), vec3(0.30, 0.31, 0.32), step(0.6, r(14))).mul(float(1).sub(step(0.8, fract(y.div(0.25))).mul(0.15).mul(det))), P.gar));
+  // glass: the sky in the upper panes, nets or curtains in some rooms
+  const cell = vec2(P.bi.add(P.ui.mul(7)).add(X.side.mul(17)), P.fl), wy = clamp(P.yf.sub(P.sb).div(P.wh), 0, 1);
+  const gl = mix(vec3(0.06, 0.08, 0.10), vec3(0.30, 0.36, 0.43), wy.mul(0.55).add(h(cell.add(sd)).mul(0.25)).mul(det).add(far.mul(0.25))).toVar();
+  gl.assign(mix(gl, vec3(0.60, 0.58, 0.53), step(h(cell.add(sd.mul(3))), 0.28).mul(0.45).mul(det)));
+  const wm = mix(max(P.glass, P.fan), P.cov.mul(0.65), far);
+  return mix(c, gl, wm);
+}
+// a house wall by night: rooms lit by the clock (V.nP.x homes, V.nQ: the ground floor in the evening, upper floors late),
+// in patches (neighbours alike), one fixture colour per room, curtains; a porch lamp by some front doors
+function houseNight(K, X, V) {
+  const { sd, gk } = K, { y, HW } = X, P = houseLayout(K, X), { r } = P;
+  const px = max(HW.x, HW.y), far = smoothstep(0.7, 1.8, px), det = float(1).sub(smoothstep(0.05, 0.16, px));
+  const p0 = V.nP.x.mul(select(P.fl.lessThan(0.5), V.nQ.x, V.nQ.z.mul(0.4).add(1)));
+  const pl = clamp(p0.mul(vn(gk.xy.div(60)).mul(1.2).add(0.4)), 0, 0.95);
+  const cell = vec2(P.bi.add(P.ui.mul(7)).add(X.side.mul(17)), P.fl), lit = step(h(cell.add(sd.mul(31))), pl);
+  const u = h(cell.add(sd.mul(3.1))).mul(0.85).add(0.15);
+  let HC = cct(pow(u, 2.0));
+  const cur = step(h(cell.add(sd.mul(8.9))), 0.45);
+  HC = mix(HC, HC.mul(mix(vec3(1, 0.88, 0.7), vec3(1, 0.74, 0.56), step(0.6, h(cell.add(4.4))))).mul(0.6), cur);
+  const win = max(P.glass, P.fan.mul(0.8));
+  const L = mix(HC.mul(h(cell.add(1.7)).mul(0.4).add(0.6)).mul(lit).mul(win), cct(float(0.25)).mul(pl).mul(P.cov).mul(0.9), far);
+  const lamp = P.isDB.mul(step(length(vec2(P.ax.sub(P.doff).sub(0.68), y.sub(P.dh.add(0.2)))), 0.09)).mul(step(r(15), 0.45)).mul(step(0.05, V.nP.x)).mul(det);
+  return L.add(vec3(1, 0.8, 0.5).mul(1.4).mul(lamp));
+}
+// city blocks other than houses: some variety of bay and storey by building (flats, estates, offices; not curtain walls or sheds)
+function blockVary(K) {
+  const on = step(0.5, K.LST).mul(step(K.LST, 4.5)), j = h(vec2(K.sd.mul(4.13).add(0.7), 0.29)), k = h(vec2(K.sd.mul(2.29).add(0.3), 0.61));
+  K.BW = K.BW.mul(mix(float(1), j.mul(0.4).add(0.82), on)); K.FH = K.FH.mul(mix(float(1), k.mul(0.12).add(0.95), on));
+}
+
 // A place's buildings on the globe (globe/place-look.js; skill docklands-3d-page, "Three.js port: places look like the
 // model"): the same facade program (lookWall, the Map window grid, nightNew / nightOld) on a place's core tiles and city
 // blocks. Per vertex (or the nodes given in inst: { col, mcol, gk, rcol }, e.g. per-instance attributes of the city blocks): col (the Realistic colour and code, as the model: alpha 132 + style x 8
@@ -347,19 +482,30 @@ export function placeBuildingMaterial(V, inst = null, night = true) {
     const A = k => inst ? inst[k] : attribute(k, 'vec4'), real = V.look.greaterThan(0.5), c0 = select(real, A('col'), A('mcol'));
     // city blocks: one record for the walls and the flat top, the top's colour apart (rcol)
     const col = inst && inst.rcol ? vec4(select(wall.greaterThan(0.5).or(real.not()), c0.rgb, inst.rcol.rgb), c0.a) : c0;
-    return { col, uw: select(wall.greaterThan(0.5), dot(pl.xz, t), float(-1)), gk: A('gk'), wy: pl.y.add(PLACE_OFF), wall };
+    return { col, uw: select(wall.greaterThan(0.5), dot(pl.xz, t), float(-1)), gk: A('gk'), wy: pl.y.add(PLACE_OFF), wall, pl, nL };
   };
+  // the city blocks of the places with a box frame per instance (inst.bx, place-look.js blockInstAttrs): house walls
+  // (houseWall, houseNight) on house-sized boxes, bay and storey variety on the others (blockVary); without bx (the core
+  // tiles, the merged outlines' material has bx = 0 per vertex and takes the old path) the graph is as before
+  const HB = !!(inst && inst.bx);
+  const houseOf = (S, C) => { const X = houseFrame(S, C.gk, inst.bx, inst.rcol.a); for (const k of ['a', 'Lw', 'y', 'E', 'side', 'long', 'area', 'mat', 'HW']) X[k] = X[k].toVar(); return X; };
   m.colorNode = Fn(() => {
-    const C = facadeCommon(src()), K = { ...C };
-    for (const k of ['lum', 'sd', 'BW', 'FH', 'GF', 'LST', 'DW', 'wall', 'dist']) K[k] = C[k].toVar();
+    const S = src(), C = facadeCommon(S), K = { ...C };
+    if (HB) blockVary(K);
+    for (const k of ['lum', 'sd', 'BW', 'FH', 'GF', 'LST', 'DW', 'wall', 'dist']) K[k] = K[k].toVar();
     const out = vec3(0).toVar();
-    If(K.LST.greaterThan(-0.5).and(K.wall.greaterThan(0.5)).and(V.win.greaterThan(0.5)), () => { out.assign(lin(lookWall(K))); })
-      .Else(() => {
-        const g = vec2(K.uw.div(1.8), K.wy.div(3.6)), cell = floor(g), f = fract(g);
-        const w = step(0.14, f.x).mul(step(f.x, 0.86)).mul(step(0.2, f.y)).mul(step(f.y, 0.84)).mul(clamp(float(1.4).sub(K.dist.div(900)), 0.15, 1));
-        const glass = mix(vec3(0.13, 0.18, 0.25), vec3(0.42, 0.52, 0.62), clamp(K.wy.sub(K.gk.z).div(300), 0, 1).add(h(cell).mul(0.12))).mul(K.lum.mul(0.7).add(0.55));
-        out.assign(lin(mix(K.base, glass, w.mul(0.8).mul(K.wall).mul(V.win))));
-      });
+    const lookOn = K.LST.greaterThan(-0.5).and(K.wall.greaterThan(0.5)).and(V.win.greaterThan(0.5));
+    const doLook = () => { out.assign(lin(lookWall(K))); }, doMap = () => {
+      const g = vec2(K.uw.div(1.8), K.wy.div(3.6)), cell = floor(g), f = fract(g);
+      const w = step(0.14, f.x).mul(step(f.x, 0.86)).mul(step(0.2, f.y)).mul(step(f.y, 0.84)).mul(clamp(float(1.4).sub(K.dist.div(900)), 0.15, 1));
+      const glass = mix(vec3(0.13, 0.18, 0.25), vec3(0.42, 0.52, 0.62), clamp(K.wy.sub(K.gk.z).div(300), 0, 1).add(h(cell).mul(0.12))).mul(K.lum.mul(0.7).add(0.55));
+      out.assign(lin(mix(K.base, glass, w.mul(0.8).mul(K.wall).mul(V.win))));
+    };
+    if (HB) {
+      K.base = K.base.toVar(); K.uw = K.uw.toVar();
+      const X = houseOf(S, C), isH = K.LST.lessThan(0.5).and(inst.bx.z.greaterThan(0)).and(lookOn);
+      If(isH, () => { out.assign(lin(houseWall(K, X))); }).ElseIf(lookOn, doLook).Else(doMap);
+    } else If(lookOn, doLook).Else(doMap);
     // pixel art (styles.js): the nearest colour of the 33-colour palette (data/pixel-palette.json, V.pal), flat, no windows
     const pc = vec3(0.5).toVar(), bd = float(1e9).toVar();
     If(V.pix.greaterThan(0.5), () => { Loop(V.pal.array.length, ({ i }) => { const q = V.pal.element(i), dd = dot(K.base.sub(q), K.base.sub(q)); If(dd.lessThan(bd), () => { bd.assign(dd); pc.assign(q); }); }); });
@@ -372,9 +518,12 @@ export function placeBuildingMaterial(V, inst = null, night = true) {
   if (night) m.emissiveNode = Fn(() => {
     const E = vec3(0).toVar();
     If(V.night.greaterThan(0.001).and(V.pix.lessThan(0.5)), () => {
-      const C = facadeCommon(src()), { gk, wy, wall, dist } = C;
+      const S = src(), C = facadeCommon(S), { gk, wy, wall, dist } = C;
+      if (HB) blockVary(C);
       const ty = floor(gk.w.div(1000).add(0.001)), top = gk.w.sub(ty.mul(1000)), ht = max(1, top.sub(gk.z));
       let L = NIGHT_STYLE === 'old' ? nightOld(C, V) : nightNew(C, V);
+      // houses: their own rooms (the same layout as by day); branch-free, so every derivative stays in uniform control flow
+      if (HB) L = select(C.LST.lessThan(0.5).and(inst.bx.z.greaterThan(0)), houseNight(C, houseFrame(S, gk, inst.bx, inst.rcol.a), V).mul(wall).mul(V.win), L);
       const tb = top.sub(wy), band = step(90, ht).mul(step(tb, 3.5)).mul(step(0, tb)).mul(wall);
       L = L.add(vec3(0.32, 0.3, 0.27).mul(smoothstep(3.5, 0.5, tb)).mul(band));
       const hz = float(1).sub(exp(dist.div(-5200))).mul(0.6);

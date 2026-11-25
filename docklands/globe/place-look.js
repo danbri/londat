@@ -38,10 +38,13 @@ const clamp01 = v => Math.max(0, Math.min(1, v));
 const GROUND_K = 0.3;   // (0.40 / 0.72) ^ 2.2: the place texture's beige ground to the model's ground brightness
 // generic wall and roof materials (sRGB 0..1, before light): the region config's place.look weights pick among them
 const WALLS = { renderWhite: [.86, .85, .81], renderCream: [.86, .80, .66], renderOchre: [.80, .65, .45], renderPastel: [.82, .76, .74], stone: [.80, .77, .68], stock: [.66, .58, .43],
-  brickRed: [.58, .31, .23], brickBrown: [.47, .35, .27], concrete: [.62, .61, .57], glassS: [.42, .47, .52], glassG: [.33, .45, .50], glassD: [.24, .29, .34], metal: [.72, .74, .74], metalC: [.45, .53, .55], timber: [.55, .42, .30] };
+  brickRed: [.58, .31, .23], brickBrown: [.47, .35, .27], concrete: [.62, .61, .57], glassS: [.42, .47, .52], glassG: [.33, .45, .50], glassD: [.24, .29, .34], metal: [.72, .74, .74], metalC: [.45, .53, .55], timber: [.55, .42, .30],
+  pebble: [.74, .71, .63], tileHung: [.56, .33, .25], boardWhite: [.84, .84, .80] };   // (tileHung: the brick of the ground floor; the shader hangs clay tiles above it)
+// the wall finish a house's facade draws (materials.js houseWall, rcol.a of a city block): 1 render, 2 brick, 3 stone, 4 pebble-dash, 5 tile-hung, 6 weatherboard
+const FINISH = { renderWhite: 1, renderCream: 1, renderOchre: 1, renderPastel: 1, concrete: 1, stone: 3, stock: 2, brickRed: 2, brickBrown: 2, pebble: 4, tileHung: 5, timber: 6, boardWhite: 6 };
 const ROOFS = { clay: [.55, .32, .24], ctile: [.43, .34, .30], ctileG: [.42, .42, .42], slate: [.30, .32, .35], metal: [.55, .57, .58], glass: [.36, .45, .50], felt: [.34, .34, .35], gravel: [.47, .46, .43], membrane: [.58, .59, .58], concrete: [.58, .57, .54], green: [.33, .40, .27] };
 // without a region look block: neutral weights (no locale in them)
-const DEF_LOOK = { wall: { house: { renderWhite: 30, renderCream: 25, brickRed: 20, stone: 15, brickBrown: 10 }, flats: { renderCream: 25, renderWhite: 25, brickBrown: 20, concrete: 20, brickRed: 10 },
+const DEF_LOOK = { wall: { house: { brickRed: 24, brickBrown: 14, stock: 8, renderWhite: 14, renderCream: 10, renderPastel: 4, pebble: 9, stone: 7, tileHung: 5, timber: 2, boardWhite: 3 }, flats: { renderCream: 25, renderWhite: 25, brickBrown: 20, concrete: 20, brickRed: 10 },
   estate: { concrete: 45, brickBrown: 25, renderWhite: 30 }, office: { concrete: 35, stone: 30, glassS: 20, renderWhite: 15 }, civic: { stone: 50, brickRed: 25, renderCream: 25 }, shed: { metal: 50, concrete: 30, brickBrown: 20 } },
   roof_pitched: { clay: 45, slate: 30, ctile: 25 }, roof_flat: { gravel: 40, membrane: 35, felt: 25 } };
 const CURTAIN = { glassG: 35, glassS: 35, glassD: 15, metal: 15 };
@@ -105,7 +108,7 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
   const BMAT = logDepth(placeBuildingMaterial(V)), BMAT_DAY = logDepth(placeBuildingMaterial(V, null, false));
   // city blocks: boxes (InstancedMesh) and merged outlines carry col, mcol, gk and rcol (the flat top's colour), per instance
   // (InstancedBufferAttribute, read by name) or per vertex: one material for both
-  const BA = { col: attribute('col', 'vec4'), mcol: attribute('mcol', 'vec4'), gk: attribute('gk', 'vec4'), rcol: attribute('rcol', 'vec4') };
+  const BA = { col: attribute('col', 'vec4'), mcol: attribute('mcol', 'vec4'), gk: attribute('gk', 'vec4'), rcol: attribute('rcol', 'vec4'), bx: attribute('bx', 'vec4') };   // bx: the box frame (materials.js houseFrame)
   const BLOCK = logDepth(placeBuildingMaterial(V, BA)), BLOCK_DAY = logDepth(placeBuildingMaterial(V, BA, false));
   const nightMats = () => state.nightMats !== false;   // (true until the first frame decides)
   const bmat = () => nightMats() ? BMAT : BMAT_DAY, blkmat = () => nightMats() ? BLOCK : BLOCK_DAY;
@@ -228,9 +231,9 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
   // pitched: the roof is a gabled prism (places.js compactInto, house-sized boxes): a pitched roof material
   function blockFacts(p, seed, h, area, src, pitched = false) {
     const o = lookOf(p), j = s => hash01(seed + s), style = area > 1500 && h <= 12 ? 'shed' : area < 200 && h <= 12 ? 'house' : h <= 21 ? 'flats' : h < 40 ? 'estate' : 'office';
-    const si = STYLE_IDS.indexOf(style), wall = WALLS[pick(o.L.wall[style] || DEF_LOOK.wall[style], j('m'))].map(c => c * (.93 + .14 * j('v')));
+    const si = STYLE_IDS.indexOf(style), wn = pick(o.L.wall[style] || DEF_LOOK.wall[style], j('m')), wall = WALLS[wn].map(c => c * (.93 + .14 * j('v')));
     const roof = ROOFS[pitched ? pick(o.L.roof_pitched || DEF_LOOK.roof_pitched, j('p')) : pick(o.L.roof_flat || DEF_LOOK.roof_flat, j('f'))].map(c => c * (pitched ? .9 + .2 * j('r') : 1));
-    return { code: si * 8, use: style === 'house' || style === 'flats' || style === 'estate' ? 1 : 0, wall: wall.map(toByte), roof: roof.map(toByte), map: MEASURED.has(src) ? MAP_BLD : MAP_LV };
+    return { code: si * 8, use: style === 'house' || style === 'flats' || style === 'estate' ? 1 : 0, wall: wall.map(toByte), roof: roof.map(toByte), map: MEASURED.has(src) ? MAP_BLD : MAP_LV, finish: FINISH[wn] || 0 };
   }
 
   // ---------- core buildings: per-vertex attributes from the tile's vertices (fid -> features.json row)
@@ -257,16 +260,24 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
   }
   // city blocks as instances: per-instance attributes (the material reads them by name)
   function blockInstAttrs(mesh, q, meta, p, key) {
-    const k = q.inst.t.length / 3, T = q.inst.t, S = q.inst.s, L = meta?.boxes, HS = meta?.height_sources || [];
-    const C = new Float32Array(k * 4), R = new Float32Array(k * 4), M = new Float32Array(k * 4), K = new Float32Array(k * 4);
+    const k = q.inst.t.length / 3, T = q.inst.t, S = q.inst.s, Q = q.inst.r, L = meta?.boxes, HS = meta?.height_sources || [];
+    const C = new Float32Array(k * 4), R = new Float32Array(k * 4), M = new Float32Array(k * 4), K = new Float32Array(k * 4), X = new Float32Array(k * 4);
     const MP = q.inst.map, PR = q.name === 'roofs';   // (roofs: MP maps an instance to its box record; the same seed, so the walls under it match)
+    // the ground under a box: compact boxes (the last compact_boxes.count instances) reach drop_m into the ground; the
+    // facade counts its storeys from the ground (2026-11-25: they counted from 3 m under it). A roof prism: its base is the
+    // eaves; the walls' ground is the eaves less the walls' height (record height less the roof)
+    const drop = meta?.compact?.drop_m ?? 0, c0 = k - (meta?.compact_boxes?.count ?? 0);
     for (let i = 0; i < k; i++) {
       const b = MP ? MP[i] : i, hs = S[3 * i + 1], h = L?.h?.[b] != null ? L.h[b] / 10 : hs, area = S[3 * i] * S[3 * i + 2], src = L ? HS[L.s[b]] : '', f = blockFacts(p, key + ':' + b, h, area, src, PR);   // (the facade style from the block's own height; the box also reaches drop_m into the ground)
-      C.set([f.wall[0] / 255, f.wall[1] / 255, f.wall[2] / 255, (132 + f.code) / 255], 4 * i); R.set([f.roof[0] / 255, f.roof[1] / 255, f.roof[2] / 255, 0], 4 * i); M.set([f.map[0] / 255, f.map[1] / 255, f.map[2] / 255, 0], 4 * i);
-      const base = T[3 * i + 1] + PLACE_OFF; K.set([T[3 * i], T[3 * i + 2], base, f.use * 1000 + Math.min(999, Math.max(0, base + hs))], 4 * i);
+      C.set([f.wall[0] / 255, f.wall[1] / 255, f.wall[2] / 255, (132 + f.code) / 255], 4 * i); R.set([f.roof[0] / 255, f.roof[1] / 255, f.roof[2] / 255, f.finish / 255], 4 * i); M.set([f.map[0] / 255, f.map[1] / 255, f.map[2] / 255, 0], 4 * i);
+      const y0 = T[3 * i + 1] + PLACE_OFF, ground = PR ? y0 + hs - h : y0 + (i >= c0 ? drop : 0), top = PR ? y0 : y0 + hs;   // (top: the eaves of a house with a roof)
+      K.set([T[3 * i], T[3 * i + 2], ground, f.use * 1000 + Math.min(999, Math.max(0, top))], 4 * i);
+      const qy = Q ? Q[4 * i + 1] : 0, qw = Q ? Q[4 * i + 3] : 1;   // a turn about y: cos a = w^2 - y^2, sin a = 2 w y
+      X.set([qw * qw - qy * qy, 2 * qw * qy, S[3 * i] / 2, S[3 * i + 2] / 2], 4 * i);
     }
     const g = mesh.geometry;
     g.setAttribute('col', new THREE.InstancedBufferAttribute(C, 4)); g.setAttribute('rcol', new THREE.InstancedBufferAttribute(R, 4)); g.setAttribute('mcol', new THREE.InstancedBufferAttribute(M, 4)); g.setAttribute('gk', new THREE.InstancedBufferAttribute(K, 4));
+    g.setAttribute('bx', new THREE.InstancedBufferAttribute(X, 4));
     return blkmat();
   }
   // city blocks as merged outlines: per vertex, by the block of the first triangle that uses the vertex
@@ -281,10 +292,11 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
       for (let t = t0; t < t1; t++) for (let c = 0; c < 3; c++) { const v = idx ? idx[3 * t + c] : 3 * t + c; vs.push(v); const x = pos[3 * v], y = pos[3 * v + 1], z = pos[3 * v + 2]; y0 = Math.min(y0, y); y1 = Math.max(y1, y); x0 = Math.min(x0, x); x1 = Math.max(x1, x); z0 = Math.min(z0, z); z1 = Math.max(z1, z); }
       const h = L ? L.h[b] / 10 : y1 - y0, f = blockFacts(p, key + ':o' + b, h, (x1 - x0) * (z1 - z0) * 0.7, L ? HS[L.s[b]] : '');
       for (const v of vs) { if (done[v]) continue; done[v] = 1; const o = 4 * v;
-        C.set([f.wall[0] / 255, f.wall[1] / 255, f.wall[2] / 255, (132 + f.code) / 255], o); R.set([f.roof[0] / 255, f.roof[1] / 255, f.roof[2] / 255, 0], o); M.set([f.map[0] / 255, f.map[1] / 255, f.map[2] / 255, 0], o);
+        C.set([f.wall[0] / 255, f.wall[1] / 255, f.wall[2] / 255, (132 + f.code) / 255], o); R.set([f.roof[0] / 255, f.roof[1] / 255, f.roof[2] / 255, f.finish / 255], o); M.set([f.map[0] / 255, f.map[1] / 255, f.map[2] / 255, 0], o);
         K.set([(x0 + x1) / 2, (z0 + z1) / 2, y0 + PLACE_OFF, f.use * 1000 + Math.min(999, Math.max(0, y1 + PLACE_OFF))], o); }
       t0 = t1; blk++; }
     g.setAttribute('col', new THREE.BufferAttribute(C, 4)); g.setAttribute('rcol', new THREE.BufferAttribute(R, 4)); g.setAttribute('mcol', new THREE.BufferAttribute(M, 4)); g.setAttribute('gk', new THREE.BufferAttribute(K, 4));
+    g.setAttribute('bx', new THREE.BufferAttribute(new Float32Array(nv * 4), 4));   // (no box frame: the outlines keep the old facade)
     return blkmat();
   }
 
@@ -434,9 +446,9 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
   function warmMeshes() {
     const P3 = () => new THREE.BufferAttribute(new Float32Array([0, 0, -10, 1, 0, -10, 0, 1, -10]), 3), V4 = (T = Float32Array) => new THREE.BufferAttribute(new T(12), 4, T === Uint8Array);
     const gb = new THREE.BufferGeometry(); gb.setAttribute('position', P3()); gb.setAttribute('col', V4(Uint8Array)); gb.setAttribute('mcol', V4(Uint8Array)); gb.setAttribute('gk', V4()); gb.setAttribute('_feature_id_0', new THREE.BufferAttribute(new Float32Array(3), 1));
-    const go = new THREE.BufferGeometry(); go.setAttribute('position', P3()); for (const k of ['col', 'rcol', 'mcol', 'gk']) go.setAttribute(k, V4());
+    const go = new THREE.BufferGeometry(); go.setAttribute('position', P3()); for (const k of ['col', 'rcol', 'mcol', 'gk', 'bx']) go.setAttribute(k, V4());
     const gw = new THREE.BufferGeometry(); gw.setAttribute('position', P3()); gw.setAttribute('wp', new THREE.BufferAttribute(new Float32Array(6), 2));
-    const gi = new THREE.BoxGeometry(1, 1, 1); gi.deleteAttribute('normal'); gi.deleteAttribute('uv'); for (const k of ['col', 'rcol', 'mcol', 'gk']) gi.setAttribute(k, new THREE.InstancedBufferAttribute(new Float32Array(4), 4));
+    const gi = new THREE.BoxGeometry(1, 1, 1); gi.deleteAttribute('normal'); gi.deleteAttribute('uv'); for (const k of ['col', 'rcol', 'mcol', 'gk', 'bx']) gi.setAttribute(k, new THREE.InstancedBufferAttribute(new Float32Array(4), 4));
     const bi = new THREE.InstancedMesh(gi, BLOCK, instCap(1)); bi.count = 1; bi.setMatrixAt(0, new THREE.Matrix4());
     const mt = (geo, mat, A) => { const g = geo.clone(); for (const k of A) g.setAttribute(k, new THREE.InstancedBufferAttribute(new Float32Array(4), 4)); const m = new THREE.InstancedMesh(g, mat, instCap(1)); m.count = 1; m.setMatrixAt(0, new THREE.Matrix4()); return m; };
     const bi2 = new THREE.InstancedMesh(gi, BLOCK_DAY, instCap(1)); bi2.count = 1; bi2.setMatrixAt(0, new THREE.Matrix4());

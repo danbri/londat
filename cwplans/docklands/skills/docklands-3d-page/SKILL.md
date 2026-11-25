@@ -3641,6 +3641,51 @@ screenshot at 0.703 W is a level-8 quadtree edge of the imagery tiles (the cells
 Trap (2026-11-25): a command `git pull --rebase && python3 edit && git commit` lost the skill edit when the pull failed
 on unstaged files, and the commit that followed held only the page files: check `git show --stat` after each commit.
 
+### House walls on compact boxes (2026-11-25)
+
+Owner, 2026-11-25, with phone screenshots near Eastergate: "walls that looks plausible and varied and real" (every small
+house had the same small window grid, like a block of flats). Now a compact box of style 'house' (blockFacts: under 200 m2
+and at most 12 m) has a house facade made in the shader (materials.js `houseFrame`, `houseLayout`, `houseWall`,
+`houseNight`), seeded by the building's centre. Rule:
+- **Only the place city blocks.** placeBuildingMaterial with `inst.bx` (place-look.js BA) takes the house path; the
+  model's buildingMaterial, lookWall and the core tiles (BMAT) are not changed (a JS flag, so their graphs are the same).
+  The Docklands default view was compared before and after (screenshots below).
+- **Box frame per instance.** blockInstAttrs adds `bx` = (cos, sin of the box's turn, half long side, half short side);
+  the fragment finds its wall (long or gable end, which side), the metres along it from its left end and the height over
+  the ground. Outlines get bx = 0 and keep lookWall. `gk.z` of compact boxes is now the ground (it was 3 m below:
+  `drop_m`); a roof prism's gk is (ground, eaves), so its gable ends have no windows above the eaves.
+- **Layout.** Dwellings along a long wall of 5 to 7.5 m (one, a semi-detached pair or a terrace; every other unit
+  mirrored); storeys of about 2.6 m from the eaves height (1 to 3); bays of 2.3 to 3.4 m; windows of four kinds by
+  building (single portrait sash 40 %, paired casements 22 %, wide post-war 26 %, small cottage 12 %), frames (white 70 %,
+  else black or brown), sills, lintels (brick soldier course or stone), a door with a fanlight in one bay of each unit on
+  the front long side (door colour by unit), a plinth, gable ends with one small window on some storeys. Low walls (the
+  data's houses are often 3 to 4 m to the ridge, walls 1.7 to 2.5 m): smaller windows and lower sills, not none. Garages
+  (14 to 45 m2, walls under 3.2 m): an up-and-over door; sheds (under 25 m2 or walls under 1.5 m): no windows.
+- **Finish** (rcol.a, place-look.js FINISH from the picked wall material): render, brick (75 mm courses, stretcher bond,
+  each brick its own shade), stone courses, pebble-dash speckle, tile-hung upper storeys on brick, weatherboard. DEF_LOOK
+  house weights (no region look: the cells, Greater London, the UK lite set): brick red 24, brown 14, yellow stock 8,
+  render white 14, cream 10, pastel 4, pebble-dash 9, stone 7, tile-hung 5, timber 2, white board 3 (stated assumptions,
+  not data; a region config's `place.look.wall.house` still wins).
+- **Distance.** Frames are at least about a pixel wide until the window is a few pixels (fw = clamp(0.8 px, 0.07, 0.22));
+  brick and pebble texture fade to their mean under 3 cm a pixel; windows fade to their mean share from 0.5 to 1.3 m a
+  pixel by day, 0.7 to 1.8 m by night (lit windows stay points longer).
+- **Night.** Rooms lit by the clock (V.nP.x; ground floor in the evening, upper floors late), in patches of neighbours,
+  one fixture colour a room, curtains, a porch lamp by 45 % of front doors. Branch-free select against nightNew, so every
+  derivative stays in uniform control flow (WebGPU).
+- **Others.** Flats, estates and offices of the blocks get bay width x 0.82 to 1.22 and storey height x 0.95 to 1.07 by
+  building (blockVary); curtain walls and sheds as before.
+- **Cost** (software WebGL, 390 x 700, DSF 1; CPU time to submit a frame, median of 14 frames): Eastergate 300 m
+  5.0 -> 3.4 ms (a second run 4.6 ms), 190 m 4.9 -> 3.3 ms, night 5.5 -> 3.7 ms (3.2), York 1.1 km 2.4 -> 1.9 ms, BT
+  Tower 3.9 -> 4.2 ms: no rise beyond the run-to-run spread (submit is CPU time; the extra shader work is on the GPU and
+  is not separable in SwiftShader here). The Docklands default view at a fixed clock (`?t=2026-11-25T12:30`): 18 of
+  167,700 scene pixels differ by more than 24 levels (moving traffic), so the model is unchanged. No page errors in any
+  view. `npm run check`, `npm test` pass.
+- **Test views**: http://127.0.0.1:8195/docklands/?ll=50.8406,-0.6589,190&ht=60,75&t=2026-11-25T12:30&cells=1 then
+  16 wheel steps in (range about 105 m); the globe's goTo has a 300 m floor over a place, so `?ll=` alone cannot come
+  closer.
+- Open: houses of more than 200 m2 or wide low blocks (barns, bungalow rows, schools) keep the flats style; the front side
+  is a seeded guess (no road side yet: the cell roads could give it); no bay windows, porches or chimneys in geometry.
+
 ## Three.js port: the UK lite set (2026-10-22)
 
 Owner, 2026-10-22, about buildings for the whole UK: "can we pick a lite subset or slice somehow? Key landmarks, modest

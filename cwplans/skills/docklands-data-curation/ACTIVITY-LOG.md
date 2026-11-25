@@ -3868,3 +3868,9 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   please" (the look first, then roads). Pitched roofs by rule on house-sized compact boxes (all compact-box sets; ?roofs=0
   for flat; the card says the roof is not measured). Roads: build-cell-roads.mjs (OSM via Overture transportation, per
   level-11 cell), populate-cells --roads, two line layers with ?cells=1; the roads run waits for the moglob-1.2 buildings.
+- 2026-11-25, owner: "walls that looks plausible and varied and real". House walls on compact boxes (cells, Greater London,
+  UK lite): a per-building facade in the shader (materials.js houseWall / houseNight, place-look.js bx attribute and
+  FINISH): dwellings (detached, semi, terrace), storeys from the eaves, four window kinds, frames, sills, lintels, doors,
+  plinth, garages, brick / render / stone / pebble-dash / tile-hung / weatherboard; rooms lit by the clock at night; bay
+  variety on flats and offices; box ground now at ground level (was drop_m below). Docklands model unchanged (fixed-clock
+  screenshot diff). Submit time Eastergate 300 m 5.0 -> 3.4 ms. Skill: docklands-3d-page, "House walls on compact boxes".
