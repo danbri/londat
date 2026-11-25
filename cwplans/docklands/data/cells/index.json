@@ -20,13 +20,27 @@
    "key": "8-247-199",
    "repo": "moglob-1.1",
    "est_records": 0,
-   "state": "planned"
+   "state": "published",
+   "buildings": 5306,
+   "named": 11,
+   "tiles": 8,
+   "bytes": 191426,
+   "built": "2026-11-25T13:02:27.193Z",
+   "minutes": 0.4,
+   "commit": "2048e8a"
   },
   {
    "key": "8-248-199",
    "repo": "moglob-1.1",
    "est_records": 152679,
-   "state": "planned"
+   "state": "published",
+   "buildings": 157268,
+   "named": 217,
+   "tiles": 221,
+   "bytes": 4371748,
+   "built": "2026-11-25T13:03:19.681Z",
+   "minutes": 0.9,
+   "commit": "2048e8a"
   },
   {
    "key": "8-249-199",
