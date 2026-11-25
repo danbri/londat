@@ -773,7 +773,9 @@ body.noLabels #globeLabels,body.noLabels #whereAmI{visibility:hidden!important}
           Promise.resolve(L.query([-180 + x * sz, -90 + y * sz, -180 + (x + 1) * sz, -90 + (y + 1) * sz], level, [x, y])).then(fs => {
             if (L.cells.get(k) !== cell) return;   // (dropped meanwhile)
             const feats = (fs && fs.features) || fs || [];
-            if (L.kind !== 'points') { cell.meshes = buildLines(feats.flatMap(f => linesOf(f.geometry)), G.heightAt, L.mat, L.style?.lift || 0); for (const m of cell.meshes) { m.visible = false; scene.add(m); } }
+            // (spec.build(features, heightAt) -> meshes with userData.C: a layer's own geometry, e.g. roads at their width,
+            // road-ribbons.js; else lines)
+            if (L.kind !== 'points') { cell.meshes = L.build ? L.build(feats, G.heightAt) : buildLines(feats.flatMap(f => linesOf(f.geometry)), G.heightAt, L.mat, L.style?.lift || 0); for (const m of cell.meshes) { m.visible = false; scene.add(m); } }
             if (L.labels || L.kind === 'points') for (const f of feats) { const p = f.properties || {}, xy = f.geometry?.type === 'Point' ? f.geometry.coordinates : labelPoint(f.geometry), text = p[(L.labels && L.labels.text) || 'name']; if (!xy || !text) continue;
               const lb = L.labels || {}, fn = (v, d) => typeof v === 'function' ? v(p) : v ?? d;
               cell.labels.push(labels.add({ id: L.id + k + text, text, cls: lb.class || 'extra', P: geodeticToEcef(xy[0], xy[1], G.heightAt(xy[0], xy[1]) + 30), up: enuBasis(xy[0], xy[1]).up, minZ: fn(lb.minZoom, null), rank: typeof lb.rank === 'function' ? lb.rank(p) : +p[lb.rank || 'rank'] || 5, pop: +p.pop || 0,
@@ -793,7 +795,7 @@ body.noLabels #globeLabels,body.noLabels #whereAmI{visibility:hidden!important}
   G.onBaseDem = a => {
     if (!G.ready || F.eyeGeo.h > 1.2e6) return; let n = 0, v = 0; const t0 = performance.now();
     const meets = b => b && b[0] <= a[2] && b[2] >= a[0] && b[1] <= a[3] && b[3] >= a[1];
-    const re = m => { if (!meets(m.userData.bbox)) return; const k = rebuildLines(m, G.heightAt, a); if (k) { n++; v += k; } };
+    const re = m => { if (!meets(m.userData.bbox)) return; const k = m.userData.rebuild ? m.userData.rebuild(G.heightAt) : rebuildLines(m, G.heightAt, a); if (k) { n++; v += k; } };
     for (const L of layers) for (const m of L.meshes) re(m);
     for (const L of cellLayers) for (const c of L.cells.values()) for (const m of c.meshes) re(m);
     G.stats.relines = { chunks: n, vertices: v, ms: Math.round(performance.now() - t0) }; if (n) { G.dirty = true; H.draw(); }

@@ -164,13 +164,18 @@ export function roadsNear(lon, lat, r = 1000) {
   return { within_m: r, km_by_class: Object.fromEntries(Object.entries(km).sort((a, b) => b[1] - a[1]).map(([k, v]) => [k, Math.round(v * 10) / 10])), nearest_named: best && best.dist_m <= 5 * r ? best : null,
     source: 'OpenStreetMap roads via Overture Maps (ODbL 1.0), the road files of the building cells' };
 }
+const RIBBON_ALT = 2500;
 function addCellRoads(G, withRoads) {
   const add = () => {
     if (!G.addCellLayer) return setTimeout(add, 500);
     const query = major => async (bb, level, [x, y]) => { const k8 = `8-${x >> 3}-${y >> 3}`, base = withRoads.get(k8); if (!base) return [];
       const fs = await roadFile(base, `11-${x}-${y}`); return (fs || []).filter(f => f.properties.major === major); };
-    G.addCellLayer({ id: 'cells:roads-major', label: 'Roads, motorway to tertiary (OpenStreetMap via Overture)', kind: 'lines', levels: [[12000, 11]], style: { color: '#ffcf7a', opacity: 0.9, lift: 2 }, query: query(true) });
-    G.addCellLayer({ id: 'cells:roads-minor', label: 'Streets and service roads (OpenStreetMap via Overture)', kind: 'lines', levels: [[6000, 11]], style: { color: '#f2efe6', opacity: 0.55, lift: 2 }, query: query(false) });
+    // far: lines (one pixel); near (below RIBBON_ALT): every road at its width (road-ribbons.js: width by class, on the
+    // globe's ground, asphalt lit by the place's sun; owner, 2026-11-25: "real width please")
+    G.addCellLayer({ id: 'cells:roads-major', label: 'Roads, motorway to tertiary (OpenStreetMap via Overture)', kind: 'lines', levels: [[12000, 11]], style: { color: '#ffcf7a', opacity: 0.9, lift: 2, minAlt: RIBBON_ALT }, query: query(true) });
+    G.addCellLayer({ id: 'cells:roads-minor', label: 'Streets and service roads (OpenStreetMap via Overture)', kind: 'lines', levels: [[6000, 11]], style: { color: '#f2efe6', opacity: 0.55, lift: 2, minAlt: RIBBON_ALT }, query: query(false) });
+    import('./road-ribbons.js').then(({ buildRibbons }) => G.addCellLayer({ id: 'cells:roads-width', label: 'Roads at their width (OpenStreetMap via Overture; width by class, not measured)', kind: 'lines', levels: [[RIBBON_ALT, 11]], style: { color: '#555555' },
+      build: buildRibbons, query: async (bb, level, xy) => [...await query(true)(bb, level, xy), ...await query(false)(bb, level, xy)] })).catch(e => console.warn('places: road ribbons', e));
   };
   add();
 }
