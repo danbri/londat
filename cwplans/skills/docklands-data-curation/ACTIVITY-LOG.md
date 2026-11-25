@@ -3874,3 +3874,8 @@ for automation, and moglob opens an old `#v=1` share link with no page errors. `
   plinth, garages, brick / render / stone / pebble-dash / tile-hung / weatherboard; rooms lit by the clock at night; bay
   variety on flats and offices; box ground now at ground level (was drop_m below). Docklands model unchanged (fixed-clock
   screenshot diff). Submit time Eastergate 300 m 5.0 -> 3.4 ms. Skill: docklands-3d-page, "House walls on compact boxes".
+- 2026-11-25, owner: "I am concerned you may have broken our crown jewels: London", then the road network over Rotherhithe
+  "doesn't seem well aligned". The model was intact (model mode, its lights and roads); the misalignment came from the
+  cells' road layers kept on, stale, in the model's background, and the skeleton's 50 m-generalised A roads. Fixed (globe
+  mode only for cell roads; skeleton roads from 12 km up with ?cells=1; ribbons lit by the globe's sun). House walls by the
+  walls subagent (f8209c91): dwellings, windows, doors, finishes, night rooms.

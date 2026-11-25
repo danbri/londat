@@ -3636,6 +3636,15 @@ screenshot at 0.703 W is a level-8 quadtree edge of the imagery tiles (the cells
   globe.js `addCellLayer({ build })` makes a layer's own meshes; `userData.rebuild(heightAt)` redraws them on new ground
   (`G.onBaseDem`). Below `RIBBON_ALT` 2,500 m the ribbon layer draws all classes and the line layers stop
   (`style.minAlt`). Checked headless at Eastergate 300 m and 1.5 km: no page errors.
+- **Misaligned roads behind the model (2026-11-25, fixed).** Owner, after a flight from the BT Tower to Rotherhithe with
+  `?cells=1`: "the road network we see at same time doesn't seem well aligned". Causes: (1) globe.js updates cell layers
+  only in `G.frame` (globe mode); in the model's background (eye above 3 km) the draw loop kept each mesh's last on/off
+  state, so the cells' roads stayed on, stale, behind the model; (2) the UK skeleton's road lines are generalised at 50 m
+  (level 8), so they never follow the streets. Now `style.background: false` hides a cell layer outside globe mode;
+  `style.minAlt` is also applied in the draw loop; `G.addLayerRule(fn)` changes a layer by id; with ?cells=1 the layer
+  `uk-skeleton:roads` draws from 12 km up only. The ribbons were black until a place loaded (MeshStandard lit only by
+  the place's lights): now MeshBasic lit by `U.sun` (place blocks' rule), normals turned up in `fill()`. The model
+  itself was never affected: over Rotherhithe the page is in model mode with its own lights and roads.
 - **Architecture.** Base layers by cell and extras as packages (a JSON-LD registry, declared replacement, cell cards,
   Google Earth Enterprise lessons, where each London layer goes): https://github.com/danbri/londat/blob/main/docs/cell-architecture.md
 Trap (2026-11-25): a command `git pull --rebase && python3 edit && git commit` lost the skill edit when the pull failed
