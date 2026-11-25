@@ -225,10 +225,11 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
     o.info.set(b.i, f); return f;
   }
   // a city block: style by height and footprint, colours by the region's weights (no OSM tags in the tiles)
-  function blockFacts(p, seed, h, area, src) {
+  // pitched: the roof is a gabled prism (places.js compactInto, house-sized boxes): a pitched roof material
+  function blockFacts(p, seed, h, area, src, pitched = false) {
     const o = lookOf(p), j = s => hash01(seed + s), style = area > 1500 && h <= 12 ? 'shed' : area < 200 && h <= 12 ? 'house' : h <= 21 ? 'flats' : h < 40 ? 'estate' : 'office';
     const si = STYLE_IDS.indexOf(style), wall = WALLS[pick(o.L.wall[style] || DEF_LOOK.wall[style], j('m'))].map(c => c * (.93 + .14 * j('v')));
-    const roof = ROOFS[pick(o.L.roof_flat || DEF_LOOK.roof_flat, j('f'))];
+    const roof = ROOFS[pitched ? pick(o.L.roof_pitched || DEF_LOOK.roof_pitched, j('p')) : pick(o.L.roof_flat || DEF_LOOK.roof_flat, j('f'))].map(c => c * (pitched ? .9 + .2 * j('r') : 1));
     return { code: si * 8, use: style === 'house' || style === 'flats' || style === 'estate' ? 1 : 0, wall: wall.map(toByte), roof: roof.map(toByte), map: MEASURED.has(src) ? MAP_BLD : MAP_LV };
   }
 
@@ -258,8 +259,9 @@ export function makeLook(G, H, { scene, U, upF, globeLight }) {
   function blockInstAttrs(mesh, q, meta, p, key) {
     const k = q.inst.t.length / 3, T = q.inst.t, S = q.inst.s, L = meta?.boxes, HS = meta?.height_sources || [];
     const C = new Float32Array(k * 4), R = new Float32Array(k * 4), M = new Float32Array(k * 4), K = new Float32Array(k * 4);
+    const MP = q.inst.map, PR = q.name === 'roofs';   // (roofs: MP maps an instance to its box record; the same seed, so the walls under it match)
     for (let i = 0; i < k; i++) {
-      const hs = S[3 * i + 1], h = L?.h?.[i] != null ? L.h[i] / 10 : hs, area = S[3 * i] * S[3 * i + 2], src = L ? HS[L.s[i]] : '', f = blockFacts(p, key + ':' + i, h, area, src);   // (the facade style from the block's own height; the box also reaches drop_m into the ground)
+      const b = MP ? MP[i] : i, hs = S[3 * i + 1], h = L?.h?.[b] != null ? L.h[b] / 10 : hs, area = S[3 * i] * S[3 * i + 2], src = L ? HS[L.s[b]] : '', f = blockFacts(p, key + ':' + b, h, area, src, PR);   // (the facade style from the block's own height; the box also reaches drop_m into the ground)
       C.set([f.wall[0] / 255, f.wall[1] / 255, f.wall[2] / 255, (132 + f.code) / 255], 4 * i); R.set([f.roof[0] / 255, f.roof[1] / 255, f.roof[2] / 255, 0], 4 * i); M.set([f.map[0] / 255, f.map[1] / 255, f.map[2] / 255, 0], 4 * i);
       const base = T[3 * i + 1] + PLACE_OFF; K.set([T[3 * i], T[3 * i + 2], base, f.use * 1000 + Math.min(999, Math.max(0, base + hs))], 4 * i);
     }

@@ -96,6 +96,14 @@ function parseGlb(ab) {
 // instances of the unit box, appended to the tile's instanced primitive (or a new one), with their class, height (dm) and
 // height source appended to extras.blocks.boxes, so the material, the card and describeView treat them as any box
 const UNIT_BOX = { pos: [-0.5, 0, -0.5, 0.5, 0, -0.5, 0.5, 0, 0.5, -0.5, 0, 0.5, -0.5, 1, -0.5, 0.5, 1, -0.5, 0.5, 1, 0.5, -0.5, 1, 0.5], idx: [0, 4, 1, 1, 4, 5, 1, 5, 2, 2, 5, 6, 2, 6, 3, 3, 6, 7, 3, 7, 0, 0, 7, 4, 4, 7, 5, 5, 7, 6] };
+// a pitched roof by rule on a house-sized compact box (owner, 2026-11-25, of the cells' buildings: "Building default
+// textures remain bad"): a box of a building under HOUSE_M2 and at most HOUSE_H m (the "house" style of place-look.js
+// blockFacts) keeps its walls to the eaves and gets a gabled prism, the ridge along its long side, roof height min(45 % of
+// the height, half the short side x tan 35 degrees), at least 1 m; the record's height stays the top. The roof shape is not
+// measured: the card says so. ?roofs=0: flat boxes as before.
+const UNIT_GABLE = { pos: [-0.5, 0, -0.5, 0.5, 0, -0.5, 0.5, 0, 0.5, -0.5, 0, 0.5, -0.5, 1, 0, 0.5, 1, 0], idx: [0, 1, 5, 0, 5, 4, 3, 4, 5, 3, 5, 2, 0, 4, 3, 1, 2, 5] };
+export const HOUSE_M2 = 200, HOUSE_H = 12, ROOF_TAN = Math.tan(35 * Math.PI / 180);
+const ROOFS_ON = new URLSearchParams(location.search).get('roofs') !== '0';
 function compactInto(out, B, ab, bin, views) {
   const C = B.compact, k = C.count, bv = views[C.bufferView], d = new DataView(ab, bin + (bv.byteOffset || 0), k * 8), Gm = C.grid, gn = Gm.n, gvw = views[Gm.bufferView], gd = new DataView(ab, bin + (gvw.byteOffset || 0), gn * gn * 2);
   const g = new Float32Array(gn * gn); for (let i = 0; i < gn * gn; i++) g[i] = gd.getInt16(2 * i, true) * Gm.unit_m;
@@ -109,16 +117,24 @@ function compactInto(out, B, ab, bin, views) {
   const L = B.boxes ||= { c: [], h: [], s: [] }, HS = B.height_sources ||= [], sq = C.kind === 'squares';
   const hsIx = (C.height_sources || []).map(nm => { let i = HS.indexOf(nm); if (i < 0) { HS.push(nm); i = HS.length - 1; } return i; });
   const sqSrc = sq ? (() => { const nm = 'merged: area-weighted mean height of the buildings of a square'; let i = HS.indexOf(nm); if (i < 0) { HS.push(nm); i = HS.length - 1; } return i; })() : 0;
+  const rf = { t: [], r: [], s: [], map: [] }, houses = ROOFS_ON && C.kind === 'buildings';
   for (let i = 0; i < k; i++) {
     const E = d.getInt16(8 * i, true) * C.q, N = d.getInt16(8 * i + 2, true) * C.q, area = 2 ** (d.getUint8(8 * i + 4) / 10), hc = d.getUint8(8 * i + 5), h = hc <= 200 ? hc / 4 : 50 + (hc - 200) * 5;
     const a = d.getUint8(8 * i + 6) / 256 * Math.PI, fl = d.getUint8(8 * i + 7), asp = 2 ** ((fl & 15) / 3), lo = Math.sqrt(area * asp), sh = Math.sqrt(area / asp), gz = gAt(E, N), o = k0 + i;
     T[3 * o] = E; T[3 * o + 1] = gz - C.drop_m; T[3 * o + 2] = -N;
     R[4 * o] = 0; R[4 * o + 1] = Math.sin(a / 2); R[4 * o + 2] = 0; R[4 * o + 3] = Math.cos(a / 2);
     S[3 * o] = Math.max(0.5, lo); S[3 * o + 1] = h + C.drop_m; S[3 * o + 2] = Math.max(0.5, sh);
+    const r = houses && area < HOUSE_M2 && h <= HOUSE_H ? Math.min(0.45 * h, Math.max(0.5, sh) / 2 * ROOF_TAN) : 0;
+    if (r >= 1) { S[3 * o + 1] -= r; rf.t.push(E, gz + h - r, -N); rf.r.push(0, R[4 * o + 1], 0, R[4 * o + 3]); rf.s.push(S[3 * o], r, S[3 * o + 2]); rf.map.push(o); }
     L.c.push(sq ? 1 : 2 + ((fl >> 4) & 1)); L.h.push(Math.round(h * 10)); L.s.push(sq ? sqSrc : hsIx[fl >> 5] ?? 0); if (L.f) L.f.push(-1);
   }
   prim.inst = { t: T, r: R, s: S };
   B.compact_boxes = { kind: C.kind, count: k };
+  if (rf.map.length) { let rp = out.find(q => q.name === 'roofs');
+    if (!rp) { rp = { ...prim, name: 'roofs', pos: new Float32Array(UNIT_GABLE.pos), idx: new Uint16Array(UNIT_GABLE.idx), inst: { t: new Float32Array(0), r: new Float32Array(0), s: new Float32Array(0), map: [] } }; out.push(rp); }
+    const cat = (a, b) => { const x = new Float32Array(a.length + b.length); x.set(a); x.set(b, a.length); return x; };
+    rp.inst = { t: cat(rp.inst.t, rf.t), r: cat(rp.inst.r, rf.r), s: cat(rp.inst.s, rf.s), map: rp.inst.map.concat(rf.map) };
+    B.pitched_roofs = (B.pitched_roofs || 0) + rf.map.length; }
 }
 
 export async function attachPlaces(G, H, { scene, U }) {
@@ -314,7 +330,7 @@ export async function attachPlaces(G, H, { scene, U }) {
         const k = q.inst.t.length / 3; mesh = new THREE.InstancedMesh(g, blockMat(q.base.slice(0, 3)), look.instCap(k)); mesh.count = k; kind = 'blocks';   // (capacity: place-look.js instCap)
         const m4 = new THREE.Matrix4(), qt = new THREE.Quaternion(), v = new THREE.Vector3(), sc = new THREE.Vector3();
         for (let i = 0; i < k; i++) { v.fromArray(q.inst.t, 3 * i); qt.fromArray(q.inst.r, 4 * i); sc.fromArray(q.inst.s, 3 * i); mesh.setMatrixAt(i, m4.compose(v, qt, sc)); }
-        mesh.computeBoundingSphere(); mesh.material = look.blockInstAttrs(mesh, q, n.meta, n.p, n.key);
+        mesh.computeBoundingSphere(); mesh.material = look.blockInstAttrs(mesh, q, n.meta, n.p, n.key); if (q.inst.map) mesh.__instMap = q.inst.map;   // (roofs: instance -> box record)
       } else if (q.col) {   // core buildings: vertex colours, feature ids
         g.setAttribute('color', new THREE.BufferAttribute(q.col.arr, q.col.n, true)); if (q.fid) g.setAttribute('_feature_id_0', new THREE.BufferAttribute(q.fid, 1));
         mesh = new THREE.Mesh(g, q.fid ? look.buildingAttrs(g, q, n.p) : BMAT); kind = 'buildings';   // the model's facade program (place-look.js); a tile without feature ids keeps the plain material
@@ -670,7 +686,7 @@ export async function attachPlaces(G, H, { scene, U }) {
     const creditHtml = () => `<p class="small">${esc(p.credit).replace('© OpenStreetMap contributors', '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>')}</p>`;
     if (hit.object.userData.kind === 'blocks') {   // a city block: its geometry class (OSM, IGN, Microsoft), its height and the height's source
       const M = hit.object.userData.node?.meta; if (!M) return null; let k = -1, L = null;
-      if (hit.object.isInstancedMesh) { L = M.boxes; k = hit.instanceId; } else { L = M.outlines; const f = hit.faceIndex; k = L.tri_end.findIndex(e => e > f); }
+      if (hit.object.isInstancedMesh) { L = M.boxes; k = hit.object.__instMap ? hit.object.__instMap[hit.instanceId] : hit.instanceId; } else { L = M.outlines; const f = hit.faceIndex; k = L.tri_end.findIndex(e => e > f); }
       if (!L || k == null || k < 0 || k >= L.c.length) return null;
       if (L.f && L.f[k] >= 0) return rowCard(p, L.f[k], creditHtml, esc);   // a landmark drawn as a box (lite, coarse levels)
       const cls = M.classes[L.c[k]], gc = p.sur?.geometry_classes?.[cls] || { label: cls };
@@ -687,7 +703,9 @@ export async function attachPlaces(G, H, { scene, U }) {
         const m4 = new THREE.Matrix4(), ps = new THREE.Vector3(), qt = new THREE.Quaternion(), sc = new THREE.Vector3(); hit.object.getMatrixAt(k, m4); m4.decompose(ps, qt, sc);
         const ang = Math.round((2 * Math.atan2(qt.y, qt.w) * 180 / Math.PI + 360) % 180);
         const b = { kind: 'building', geometry_class: cls, height_m: L.h[k] / 10, height_source: M.height_sources[L.s[k]], footprint_m2: Math.round(sc.x * sc.z), long_side_m: Math.round(sc.x * 10) / 10, short_side_m: Math.round(sc.z * 10) / 10, orientation_deg: ang, level: hit.object.userData.node?.level };
-        const rows = [['Kind', `Building, drawn as one box at its true position: its footprint area, the orientation of its long side and its height (${LITE(p) ? 'a lite set: no outline, no name or id; landmarks have their outlines' : 'no outline, no name or id; named and irregular buildings have their outlines'})`], ['Footprint from', cls], ['Footprint', `${b.footprint_m2} m2 (box ${b.long_side_m} x ${b.short_side_m} m, long side ${b.orientation_deg}° from east)`], ['Height', `${b.height_m} m (${b.height_source})`], ['Place', p.name]];
+        const rr = ROOFS_ON && sc.x * sc.z < HOUSE_M2 && b.height_m <= HOUSE_H ? Math.min(0.45 * b.height_m, sc.z / 2 * ROOF_TAN) : 0; if (rr >= 1) b.roof = { shape: 'pitched, drawn by rule (not measured)', height_m: Math.round(rr * 10) / 10 };
+        const rows = [['Kind', `Building, drawn as one box at its true position: its footprint area, the orientation of its long side and its height (${LITE(p) ? 'a lite set: no outline, no name or id; landmarks have their outlines' : 'no outline, no name or id; named and irregular buildings have their outlines'})`], ['Footprint from', cls], ['Footprint', `${b.footprint_m2} m2 (box ${b.long_side_m} x ${b.short_side_m} m, long side ${b.orientation_deg}° from east)`], ['Height', `${b.height_m} m (${b.height_source})`],
+          ...(b.roof ? [['Roof', `pitched, ${b.roof.height_m} m: drawn by a rule for house-sized buildings (under ${HOUSE_M2} m2, at most ${HOUSE_H} m); the roof shape is not measured`]] : []), ['Place', p.name]];
         H.showCard(`<h2>Building</h2><p class="small">${esc(p.name)} · ${esc(cls)}</p><div class="tw"><table>${rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</table></div>${creditHtml()}`);
         return b; }
       if (LITE(p) || cpk === 'squares') { const b = { kind: 'merged buildings', geometry_class: cls, height_m: L.h[k] / 10, height_source: M.height_sources[L.s[k]], level: hit.object.userData.node?.level };
