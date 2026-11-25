@@ -51,7 +51,9 @@ for (const c of todo) {
   for (const z of readdirSync(GH)) if (!existsSync(join(raw, z))) linkSync(join(GH, z), join(raw, z));
   const t0 = Date.now(); console.log(`== ${c.key} (${c.repo}, about ${c.est_records} records)`);
   const r = DRY ? { status: 0 } : spawnSync(process.execPath, [join(CW, 'tools', 'build-cell-tiles.mjs'), '--cell', c.key, '--out', out], { stdio: 'inherit' });
-  for (const z of readdirSync(raw)) if (/^GHS_.*\.zip$/.test(z) && !existsSync(join(GH, z))) linkSync(join(raw, z), join(GH, z));
+  // share a GHSL zip only when it is whole (2026-11-25: a 1.6 MB part of a 50 MB tile reached the cache)
+  const whole = f => spawnSync('unzip', ['-tqq', f], { stdio: 'ignore' }).status === 0;
+  for (const z of readdirSync(raw)) if (/^GHS_.*\.zip$/.test(z) && !existsSync(join(GH, z)) && whole(join(raw, z))) linkSync(join(raw, z), join(GH, z));
   for (const f of readdirSync(raw)) if (/^overture-.*\.ndjson$/.test(f)) unlinkSync(join(raw, f));   // the raw answer (its hash is in the log)
   if (r.status !== 0 || !existsSync(join(out, 'features.json'))) { c.state = 'failed'; c.error = `exit ${r.status}`; save(); console.log(`   failed: exit ${r.status}`); continue; }
   const fj = JSON.parse(readFileSync(join(out, 'features.json'), 'utf8')), bytes = dirSize(out);
