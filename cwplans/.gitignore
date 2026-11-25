@@ -73,3 +73,4 @@ data/raw/uk-skeleton/
 
 # places on the globe (tools/build-place-tiles.mjs): OSM, DEM and national building data (Catastro: never committed)
 data/raw/places/
+data/raw/ghsl/

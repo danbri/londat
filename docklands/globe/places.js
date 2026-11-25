@@ -33,6 +33,8 @@ import { makeLook } from './place-look.js';
 import { GOV, releaseMesh } from '../governor.js';   // moglob's memory budget: tiles and places are freed by bytes, least recently used first
 
 export const PLACES_INDEX = '../cwplans/docklands/data/places/index.json';
+// the tile index of the building cells (issue #20; cwplans/tools/populate-cells.mjs): read with ?cells=1
+export const CELLS_INDEX = '../cwplans/docklands/data/cells/index.json';
 export const LOAD_M = 150000, FREE_M = 220000;
 const qs = new URLSearchParams(location.search);
 // MAX_SSE: the governor's tiers raise it under memory pressure (x 1.5, x 2: coarser tiles, fewer of them); MAX_FETCH: by
@@ -124,6 +126,21 @@ export async function attachPlaces(G, H, { scene, U }) {
   const ix = await fetch(base).then(r => r.ok ? r.json() : { places: [] }).catch(() => ({ places: [] }));
   // ?placebase=<id>:<url> (repeatable): serve a place whose files live elsewhere (index entry tileBase, e.g. the UK lite
   // set in the docklandia repository) from another base, e.g. a local copy for the headless tests
+  // ?cells=1 (issue #20 stage 3, a trial switch until the owner has looked): the published building cells of the tile
+  // index (moglob/moglob-<n>.<m> repositories, another origin) as places of kind blocks; the Greater London set and the UK
+  // lite set are left out, because the cells hold the same buildings (every building whose centroid is in the cell; the
+  // Docklands model box left to the model, as London's rule). A cell's time zone comes from G.zoneAt, its credit from its
+  // features.json.
+  if (qs.get('cells') === '1') {
+    const cx = await fetch(new URL(CELLS_INDEX, location.href)).then(r => r.ok ? r.json() : null).catch(() => null);
+    if (cx?.cells) {
+      const cells = cx.cells.filter(c => c.state === 'published' && cx.repos?.[c.repo]).map(c => {
+        const [z, x, y] = c.key.split('-').map(Number), s = 180 / 2 ** z, a = [-180 + x * s, -90 + y * s, -180 + (x + 1) * s, -90 + (y + 1) * s], tb = cx.repos[c.repo] + c.key + '/';
+        return { id: 'cell-' + c.key, name: 'Building cell ' + c.key, label: 'Building cell ' + c.key, kind: 'blocks', cell: true, area: a, extent: a, centre: [(a[0] + a[2]) / 2, (a[1] + a[3]) / 2],
+          tileBase: tb, tileset: tb + 'tileset.json', features: tb + 'features.json', buildings: c.buildings, named: c.named, exclude: ['docklands'] }; });
+      ix.places = (ix.places || []).filter(p => !(cells.length && (p.id === 'london' || p.id === 'uk-lite'))).concat(cells);
+    } else console.warn('places: ?cells=1 but no cells index');
+  }
   const rebase = new Map(qs.getAll('placebase').map(v => { const i = v.indexOf(':'); return [v.slice(0, i), v.slice(i + 1).replace(/\/?$/, '/')]; }));
   for (const p of ix.places || []) { const nb = rebase.get(p.id); if (!nb || !p.tileBase) continue; for (const k of ['tileset', 'features', 'readme', 'provenance', 'surround']) if (typeof p[k] === 'string' && p[k].startsWith(p.tileBase)) p[k] = nb + p[k].slice(p.tileBase.length); p.tileBase0 = p.tileBase; p.tileBase = nb; }   // tileBase0: greens and landmarks indexes rebase by it
   const P = (ix.places || []).map(p => ({ ...p, C: geodeticToEcef(p.centre[0], p.centre[1], 0), state: null, tiles: [], extras: [], feats: null, nodes: [], roots: [], sur: null }));
@@ -227,7 +244,7 @@ export async function attachPlaces(G, H, { scene, U }) {
       // features.json: the core's buildings (the ground grid of the core, the text interface)
       const fj = await fetchSized(new URL(p.features, base), p);
       if (p.state !== 'loading') return;
-      p.feats = indexFeatures(fj); p.ground = fj.ground; p.geoid = fj.geoid_m; p.ring = fj.ring || null;
+      p.feats = indexFeatures(fj); if (!p.credit && fj.credit) p.credit = fj.credit; p.ground = fj.ground; p.geoid = fj.geoid_m; p.ring = fj.ring || null;
       p.coreTiles = new Set((fj.tiles || []).map(t => t.key)); for (const n of p.nodes) n.core = p.coreTiles.has(n.key) && !n.kids.length;
       await warm();   // the programs, before the first tile is drawn
       if (p.state !== 'loading') return;
@@ -529,7 +546,8 @@ export async function attachPlaces(G, H, { scene, U }) {
   // the name and its second name: with Latin script preferred, a second name in the Latin script stays beside the first
   // (Dublin: "Grafton Street (Sráid Grafton)"; owner, 2026-10-22: keep English and Irish), one in another script goes
   const nameText = (n, alt) => { if (latinPreferred()) { const m = pickName(n, alt); return m && m === n && alt && alt !== n && isLatin(alt) ? `${n} (${alt})` : m || ''; } return alt ? `${n} (${alt})` : n; };
-  const localTime = p => { try { return new Intl.DateTimeFormat(p.locale || undefined, { timeZone: p.timeZone, hour: '2-digit', minute: '2-digit', weekday: 'short' }).format(new Date(H.clock())); } catch { return null; } };
+  const zoneOf = p => p.timeZone || (p.timeZone = G.zoneAt?.(p.centre[0], p.centre[1])?.timeZone || undefined);   // (a cell has no time zone of its own)
+  const localTime = p => { try { return new Intl.DateTimeFormat(p.locale || undefined, { timeZone: zoneOf(p), hour: '2-digit', minute: '2-digit', weekday: 'short' }).format(new Date(H.clock())); } catch { return null; } };
   G.placeTime = (lon, lat) => { const p = P.find(q => inArea(q, lon, lat) || (q.extent && inRect(q.extent, lon, lat))); if (!p) return null; const t = H.clock(); return { place: p.id, time_zone: p.timeZone, local: localTime(p), iso: new Date(t).toISOString() }; };
   const rowsOf = (S, k) => (S[k] || []).map(r => Object.fromEntries(S[k + '_fields'].map((f, i) => [f, r[i]])));
   // search: the place's own words (region config place.search), named buildings, points, streets, squares and water;
