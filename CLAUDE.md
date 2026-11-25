@@ -225,7 +225,9 @@ danbri/glitchcan-minigam: https://github.com/danbri/glitchcan-minigam/tree/maste
   token ("Resource not accessible by integration"); the org secret `MOGLOB_PAGES_TOKEN` (owner, 2026-11-25: "Option 2
   selected and implemented; secret is stored": a fine-grained token, resource owner moglob, Pages and Administration:
   read and write) lets each repository's `.github/workflows/pages.yml` (copy moglob-1.1's) switch Pages on at its first
-  run. Attach a new repository to the session with add_repo (access push) before any push.
+  run (the workflow needs `actions: read`, else deploy-pages finds no artifact). Repositories, cells and their state:
+  `cwplans/docklands/data/cells/index.json`, written by `cwplans/tools/populate-cells.mjs` (moglob-1.1 Great Britain south,
+  moglob-1.2 north, 2026-11-25). Attach a new repository to the session with add_repo (access push) before any push.
 - `dashboard/`: one status page for the owner, https://danbri.github.io/londat/dashboard/ (owner, 2026-10-07: "Make a
   unified dashboard url for me"): hourly cache runs, deploys, data age, knowledge graph, register, quality, the old-site
   redirect, activity. It reads the GitHub API in the browser (60 requests an hour without sign-in).

@@ -32,13 +32,16 @@ const TIERS = { london: 'london' };
 // --sparse <n>: a node coarser than the leaf level holding at most n buildings is a leaf (fewer, larger tiles where
 // buildings are sparse; the fixed cost of a tile is about 3 kB); 0 = every leaf at level 13 (the London set)
 const SPARSE = +(argOf('sparse') ?? 2000);
+// --exclude <ids>: regions whose model draws its own buildings (comma-separated; default docklands: a building whose centroid
+// is 1 m or more inside the Docklands model box is left to the model, the Greater London rule); --exclude none for no mask
+const EXCLUDE = (argOf('exclude') || 'docklands') === 'none' ? [] : (argOf('exclude') || 'docklands').split(',');
 if (!TIERS[tier]) throw new Error(`tier ${tier}: one of ${Object.keys(TIERS).join(', ')}`);
 
 const id = `cell-${cell}`, raw = join(CW, 'data', 'raw', 'places', id); mkdirSync(raw, { recursive: true });
 const out = resolve(argOf('out') || join(CW, '..', '..', 'docklandia', 'data', 'cells', cell));
 const u = p => pathToFileURL(join(CW, '..', p)).href;
-// the region config of the cell: the London place.blocks parameters, a rectangle boundary, no exclusions yet (masks of
-// our detailed sets come with the tile index, stage 3), the globe's world terrain where the world base has no tile
+// the region config of the cell: the London place.blocks parameters, a rectangle boundary, the model boxes of --exclude,
+// the globe's world terrain where the world base has no tile
 const src = `// Written by cwplans/tools/build-cell-tiles.mjs for build cell ${cell} (tier ${tier}); do not edit.
 import london from ${JSON.stringify(u('docklands/geo/regions/london.js'))};
 export default {
@@ -49,7 +52,7 @@ export default {
   place: {
     kind: 'blocks', label: ${JSON.stringify('Build cell ' + cell)}, search: [],
     boundary: { bbox: ${JSON.stringify(bb)}, name: ${JSON.stringify('quadtree cell ' + cell)} },
-    exclude: [], index: false,
+    exclude: ${JSON.stringify(EXCLUDE)}, index: false,
     outRepo: 'docklandia', outPath: ${JSON.stringify(`data/cells/${cell}/`)}, tileBase: ${JSON.stringify(`https://danbri.github.io/docklandia/data/cells/${cell}/`)},
     heights: london.place.heights, default_height_m: london.place.default_height_m,
     blocks: { ...london.place.blocks, ground_fallback: 'world-texture', sparse_leaf_n: ${SPARSE}, credit_per_set: true },

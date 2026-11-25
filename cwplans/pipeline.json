@@ -10817,6 +10817,39 @@
      "local": "docklandia:data/cells/<z-x-y>/"
     }
    ]
+  },
+  {
+   "id": "populate-cells",
+   "tool": "tools/populate-cells.mjs",
+   "command": "node cwplans/tools/populate-cells.mjs [--repo moglob-1.1] [--limit <cells>] [--push-mb 150] [--dry]",
+   "kind": "build",
+   "network": true,
+   "deterministic": true,
+   "after": [
+    "cell-tiles"
+   ],
+   "area": "buildings",
+   "method": "For each cell in state planned of the tile index docklands/data/cells/index.json: runs build-cell-tiles.mjs into the clone of the cell's moglob repository (beside londat), deletes the raw Overture answer (its hash stays in the cell's log), records counts and sizes in the index; GHSL zips shared by hard links in data/raw/ghsl/; every --push-mb commits and pushes the repository, then the index in londat.",
+   "rules": [
+    "Resumable: only cells in state planned are built; a failed build is marked failed with its exit code.",
+    "Pushes stay well under 500 MB (default 150 MB a push)."
+   ],
+   "used": [
+    {
+     "file": "docklands/data/cells/index.json"
+    },
+    {
+     "local": "data/raw/ghsl/"
+    }
+   ],
+   "generated": [
+    {
+     "file": "docklands/data/cells/index.json"
+    },
+    {
+     "local": "moglob/<repo>:data/cells/<key>/"
+    }
+   ]
   }
  ],
  "manual_activities": [

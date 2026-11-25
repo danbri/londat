@@ -1,0 +1,794 @@
+{
+ "format": "cells-index-1",
+ "about": "The building cells of the worldwide building layer (issue https://github.com/danbri/londat/issues/20): one entry per cell of the geodetic quadtree (level 8, 0.703125 degrees; x from 180 W, y from 90 S), the repository that serves it and, once built, what it holds. Written by cwplans/tools/populate-cells.mjs; the cells are built by cwplans/tools/build-cell-tiles.mjs (tier london: the Greater London parameters, credit per set, sparse leaves of 2,000 buildings, buildings in the Docklands model box left to the model). Plan of 2026-11-25: every level-8 cell that touches the UK (Natural Earth polygon plus 0.02 degree), est_records from the Overture 2026-09-23.1 Parquet footers (docs/scale-estimate.md); a cell holds every building whose centroid is in it, also in Ireland or France.",
+ "level": 8,
+ "tier": "london",
+ "release": "2026-09-23.1",
+ "repos": {
+  "moglob-1.1": "https://moglob.github.io/moglob-1.1/data/cells/",
+  "moglob-1.2": "https://moglob.github.io/moglob-1.2/data/cells/"
+ },
+ "layout": "<repo base><key>/tileset.json, features.json, tiles/<level>-<x>-<y>.glb, provenance/log.json",
+ "states": {
+  "planned": "not built",
+  "built": "built in the repository clone, not pushed yet",
+  "published": "pushed (commit)",
+  "failed": "the build failed (error)"
+ },
+ "cells": [
+  {
+   "key": "8-247-199",
+   "repo": "moglob-1.1",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-248-199",
+   "repo": "moglob-1.1",
+   "est_records": 152679,
+   "state": "planned"
+  },
+  {
+   "key": "8-249-199",
+   "repo": "moglob-1.1",
+   "est_records": 180795,
+   "state": "planned"
+  },
+  {
+   "key": "8-250-199",
+   "repo": "moglob-1.1",
+   "est_records": 158982,
+   "state": "planned"
+  },
+  {
+   "key": "8-251-199",
+   "repo": "moglob-1.1",
+   "est_records": 17607,
+   "state": "planned"
+  },
+  {
+   "key": "8-252-199",
+   "repo": "moglob-1.1",
+   "est_records": 31876,
+   "state": "planned"
+  },
+  {
+   "key": "8-253-199",
+   "repo": "moglob-1.1",
+   "est_records": 97872,
+   "state": "planned"
+  },
+  {
+   "key": "8-254-199",
+   "repo": "moglob-1.1",
+   "est_records": 78075,
+   "state": "planned"
+  },
+  {
+   "key": "8-249-200",
+   "repo": "moglob-1.1",
+   "est_records": 40274,
+   "state": "planned"
+  },
+  {
+   "key": "8-250-200",
+   "repo": "moglob-1.1",
+   "est_records": 169744,
+   "state": "planned"
+  },
+  {
+   "key": "8-251-200",
+   "repo": "moglob-1.1",
+   "est_records": 362904,
+   "state": "planned"
+  },
+  {
+   "key": "8-252-200",
+   "repo": "moglob-1.1",
+   "est_records": 333888,
+   "state": "planned"
+  },
+  {
+   "key": "8-253-200",
+   "repo": "moglob-1.1",
+   "est_records": 407187,
+   "state": "planned"
+  },
+  {
+   "key": "8-254-200",
+   "repo": "moglob-1.1",
+   "est_records": 514254,
+   "state": "planned"
+  },
+  {
+   "key": "8-255-200",
+   "repo": "moglob-1.1",
+   "est_records": 592540,
+   "state": "planned"
+  },
+  {
+   "key": "8-256-200",
+   "repo": "moglob-1.1",
+   "est_records": 370570,
+   "state": "planned"
+  },
+  {
+   "key": "8-257-200",
+   "repo": "moglob-1.1",
+   "est_records": 216022,
+   "state": "planned"
+  },
+  {
+   "key": "8-258-200",
+   "repo": "moglob-1.1",
+   "est_records": 265425,
+   "state": "planned"
+  },
+  {
+   "key": "8-248-201",
+   "repo": "moglob-1.1",
+   "est_records": 40241,
+   "state": "planned"
+  },
+  {
+   "key": "8-249-201",
+   "repo": "moglob-1.1",
+   "est_records": 122079,
+   "state": "planned"
+  },
+  {
+   "key": "8-250-201",
+   "repo": "moglob-1.1",
+   "est_records": 240267,
+   "state": "planned"
+  },
+  {
+   "key": "8-251-201",
+   "repo": "moglob-1.1",
+   "est_records": 532773,
+   "state": "planned"
+  },
+  {
+   "key": "8-252-201",
+   "repo": "moglob-1.1",
+   "est_records": 776042,
+   "state": "planned"
+  },
+  {
+   "key": "8-253-201",
+   "repo": "moglob-1.1",
+   "est_records": 369609,
+   "state": "planned"
+  },
+  {
+   "key": "8-254-201",
+   "repo": "moglob-1.1",
+   "est_records": 606805,
+   "state": "planned"
+  },
+  {
+   "key": "8-255-201",
+   "repo": "moglob-1.1",
+   "est_records": 1969423,
+   "state": "planned"
+  },
+  {
+   "key": "8-256-201",
+   "repo": "moglob-1.1",
+   "est_records": 1096223,
+   "state": "planned"
+  },
+  {
+   "key": "8-257-201",
+   "repo": "moglob-1.1",
+   "est_records": 426964,
+   "state": "planned"
+  },
+  {
+   "key": "8-258-201",
+   "repo": "moglob-1.1",
+   "est_records": 18591,
+   "state": "planned"
+  },
+  {
+   "key": "8-248-202",
+   "repo": "moglob-1.1",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-249-202",
+   "repo": "moglob-1.1",
+   "est_records": 33437,
+   "state": "planned"
+  },
+  {
+   "key": "8-250-202",
+   "repo": "moglob-1.1",
+   "est_records": 103443,
+   "state": "planned"
+  },
+  {
+   "key": "8-251-202",
+   "repo": "moglob-1.1",
+   "est_records": 128562,
+   "state": "planned"
+  },
+  {
+   "key": "8-252-202",
+   "repo": "moglob-1.1",
+   "est_records": 404069,
+   "state": "planned"
+  },
+  {
+   "key": "8-253-202",
+   "repo": "moglob-1.1",
+   "est_records": 1151013,
+   "state": "planned"
+  },
+  {
+   "key": "8-254-202",
+   "repo": "moglob-1.1",
+   "est_records": 639610,
+   "state": "planned"
+  },
+  {
+   "key": "8-255-202",
+   "repo": "moglob-1.1",
+   "est_records": 393094,
+   "state": "planned"
+  },
+  {
+   "key": "8-256-202",
+   "repo": "moglob-1.1",
+   "est_records": 456980,
+   "state": "planned"
+  },
+  {
+   "key": "8-257-202",
+   "repo": "moglob-1.2",
+   "est_records": 309239,
+   "state": "planned"
+  },
+  {
+   "key": "8-258-202",
+   "repo": "moglob-1.2",
+   "est_records": 128132,
+   "state": "planned"
+  },
+  {
+   "key": "8-249-203",
+   "repo": "moglob-1.2",
+   "est_records": 64271,
+   "state": "planned"
+  },
+  {
+   "key": "8-250-203",
+   "repo": "moglob-1.2",
+   "est_records": 137812,
+   "state": "planned"
+  },
+  {
+   "key": "8-251-203",
+   "repo": "moglob-1.2",
+   "est_records": 563835,
+   "state": "planned"
+  },
+  {
+   "key": "8-252-203",
+   "repo": "moglob-1.2",
+   "est_records": 776081,
+   "state": "planned"
+  },
+  {
+   "key": "8-253-203",
+   "repo": "moglob-1.2",
+   "est_records": 650542,
+   "state": "planned"
+  },
+  {
+   "key": "8-254-203",
+   "repo": "moglob-1.2",
+   "est_records": 854962,
+   "state": "planned"
+  },
+  {
+   "key": "8-255-203",
+   "repo": "moglob-1.2",
+   "est_records": 269744,
+   "state": "planned"
+  },
+  {
+   "key": "8-256-203",
+   "repo": "moglob-1.2",
+   "est_records": 130609,
+   "state": "planned"
+  },
+  {
+   "key": "8-257-203",
+   "repo": "moglob-1.2",
+   "est_records": 100301,
+   "state": "planned"
+  },
+  {
+   "key": "8-258-203",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-245-204",
+   "repo": "moglob-1.2",
+   "est_records": 138984,
+   "state": "planned"
+  },
+  {
+   "key": "8-246-204",
+   "repo": "moglob-1.2",
+   "est_records": 325198,
+   "state": "planned"
+  },
+  {
+   "key": "8-247-204",
+   "repo": "moglob-1.2",
+   "est_records": 158322,
+   "state": "planned"
+  },
+  {
+   "key": "8-249-204",
+   "repo": "moglob-1.2",
+   "est_records": 31566,
+   "state": "planned"
+  },
+  {
+   "key": "8-251-204",
+   "repo": "moglob-1.2",
+   "est_records": 313490,
+   "state": "planned"
+  },
+  {
+   "key": "8-252-204",
+   "repo": "moglob-1.2",
+   "est_records": 968227,
+   "state": "planned"
+  },
+  {
+   "key": "8-253-204",
+   "repo": "moglob-1.2",
+   "est_records": 987139,
+   "state": "planned"
+  },
+  {
+   "key": "8-254-204",
+   "repo": "moglob-1.2",
+   "est_records": 446576,
+   "state": "planned"
+  },
+  {
+   "key": "8-255-204",
+   "repo": "moglob-1.2",
+   "est_records": 429470,
+   "state": "planned"
+  },
+  {
+   "key": "8-256-204",
+   "repo": "moglob-1.2",
+   "est_records": 41078,
+   "state": "planned"
+  },
+  {
+   "key": "8-244-205",
+   "repo": "moglob-1.2",
+   "est_records": 87693,
+   "state": "planned"
+  },
+  {
+   "key": "8-245-205",
+   "repo": "moglob-1.2",
+   "est_records": 152759,
+   "state": "planned"
+  },
+  {
+   "key": "8-246-205",
+   "repo": "moglob-1.2",
+   "est_records": 178381,
+   "state": "planned"
+  },
+  {
+   "key": "8-247-205",
+   "repo": "moglob-1.2",
+   "est_records": 565990,
+   "state": "planned"
+  },
+  {
+   "key": "8-248-205",
+   "repo": "moglob-1.2",
+   "est_records": 29634,
+   "state": "planned"
+  },
+  {
+   "key": "8-249-205",
+   "repo": "moglob-1.2",
+   "est_records": 39040,
+   "state": "planned"
+  },
+  {
+   "key": "8-250-205",
+   "repo": "moglob-1.2",
+   "est_records": 65084,
+   "state": "planned"
+  },
+  {
+   "key": "8-251-205",
+   "repo": "moglob-1.2",
+   "est_records": 112759,
+   "state": "planned"
+  },
+  {
+   "key": "8-252-205",
+   "repo": "moglob-1.2",
+   "est_records": 119838,
+   "state": "planned"
+  },
+  {
+   "key": "8-253-205",
+   "repo": "moglob-1.2",
+   "est_records": 286666,
+   "state": "planned"
+  },
+  {
+   "key": "8-254-205",
+   "repo": "moglob-1.2",
+   "est_records": 238651,
+   "state": "planned"
+  },
+  {
+   "key": "8-255-205",
+   "repo": "moglob-1.2",
+   "est_records": 57596,
+   "state": "planned"
+  },
+  {
+   "key": "8-245-206",
+   "repo": "moglob-1.2",
+   "est_records": 69599,
+   "state": "planned"
+  },
+  {
+   "key": "8-246-206",
+   "repo": "moglob-1.2",
+   "est_records": 77605,
+   "state": "planned"
+  },
+  {
+   "key": "8-247-206",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-248-206",
+   "repo": "moglob-1.2",
+   "est_records": 20531,
+   "state": "planned"
+  },
+  {
+   "key": "8-249-206",
+   "repo": "moglob-1.2",
+   "est_records": 42698,
+   "state": "planned"
+  },
+  {
+   "key": "8-250-206",
+   "repo": "moglob-1.2",
+   "est_records": 39836,
+   "state": "planned"
+  },
+  {
+   "key": "8-251-206",
+   "repo": "moglob-1.2",
+   "est_records": 100580,
+   "state": "planned"
+  },
+  {
+   "key": "8-252-206",
+   "repo": "moglob-1.2",
+   "est_records": 63008,
+   "state": "planned"
+  },
+  {
+   "key": "8-253-206",
+   "repo": "moglob-1.2",
+   "est_records": 343434,
+   "state": "planned"
+  },
+  {
+   "key": "8-254-206",
+   "repo": "moglob-1.2",
+   "est_records": 21117,
+   "state": "planned"
+  },
+  {
+   "key": "8-246-207",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-247-207",
+   "repo": "moglob-1.2",
+   "est_records": 22920,
+   "state": "planned"
+  },
+  {
+   "key": "8-248-207",
+   "repo": "moglob-1.2",
+   "est_records": 162756,
+   "state": "planned"
+  },
+  {
+   "key": "8-249-207",
+   "repo": "moglob-1.2",
+   "est_records": 254182,
+   "state": "planned"
+  },
+  {
+   "key": "8-250-207",
+   "repo": "moglob-1.2",
+   "est_records": 545243,
+   "state": "planned"
+  },
+  {
+   "key": "8-251-207",
+   "repo": "moglob-1.2",
+   "est_records": 324400,
+   "state": "planned"
+  },
+  {
+   "key": "8-252-207",
+   "repo": "moglob-1.2",
+   "est_records": 61862,
+   "state": "planned"
+  },
+  {
+   "key": "8-253-207",
+   "repo": "moglob-1.2",
+   "est_records": 38110,
+   "state": "planned"
+  },
+  {
+   "key": "8-245-208",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-246-208",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-247-208",
+   "repo": "moglob-1.2",
+   "est_records": 75150,
+   "state": "planned"
+  },
+  {
+   "key": "8-248-208",
+   "repo": "moglob-1.2",
+   "est_records": 20886,
+   "state": "planned"
+  },
+  {
+   "key": "8-249-208",
+   "repo": "moglob-1.2",
+   "est_records": 20575,
+   "state": "planned"
+  },
+  {
+   "key": "8-250-208",
+   "repo": "moglob-1.2",
+   "est_records": 59470,
+   "state": "planned"
+  },
+  {
+   "key": "8-251-208",
+   "repo": "moglob-1.2",
+   "est_records": 114734,
+   "state": "planned"
+  },
+  {
+   "key": "8-252-208",
+   "repo": "moglob-1.2",
+   "est_records": 81082,
+   "state": "planned"
+  },
+  {
+   "key": "8-245-209",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-246-209",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-247-209",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-248-209",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-249-209",
+   "repo": "moglob-1.2",
+   "est_records": 18799,
+   "state": "planned"
+  },
+  {
+   "key": "8-250-209",
+   "repo": "moglob-1.2",
+   "est_records": 17081,
+   "state": "planned"
+  },
+  {
+   "key": "8-251-209",
+   "repo": "moglob-1.2",
+   "est_records": 62133,
+   "state": "planned"
+  },
+  {
+   "key": "8-252-209",
+   "repo": "moglob-1.2",
+   "est_records": 102480,
+   "state": "planned"
+  },
+  {
+   "key": "8-253-209",
+   "repo": "moglob-1.2",
+   "est_records": 36339,
+   "state": "planned"
+  },
+  {
+   "key": "8-245-210",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-246-210",
+   "repo": "moglob-1.2",
+   "est_records": 21820,
+   "state": "planned"
+  },
+  {
+   "key": "8-247-210",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-248-210",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-249-210",
+   "repo": "moglob-1.2",
+   "est_records": 20976,
+   "state": "planned"
+  },
+  {
+   "key": "8-250-210",
+   "repo": "moglob-1.2",
+   "est_records": 59830,
+   "state": "planned"
+  },
+  {
+   "key": "8-251-210",
+   "repo": "moglob-1.2",
+   "est_records": 70876,
+   "state": "planned"
+  },
+  {
+   "key": "8-252-210",
+   "repo": "moglob-1.2",
+   "est_records": 73729,
+   "state": "planned"
+  },
+  {
+   "key": "8-253-210",
+   "repo": "moglob-1.2",
+   "est_records": 149162,
+   "state": "planned"
+  },
+  {
+   "key": "8-246-211",
+   "repo": "moglob-1.2",
+   "est_records": 77112,
+   "state": "planned"
+  },
+  {
+   "key": "8-247-211",
+   "repo": "moglob-1.2",
+   "est_records": 25216,
+   "state": "planned"
+  },
+  {
+   "key": "8-248-211",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-249-211",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-250-211",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-251-211",
+   "repo": "moglob-1.2",
+   "est_records": 34305,
+   "state": "planned"
+  },
+  {
+   "key": "8-252-211",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-251-212",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-252-212",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-253-213",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-254-213",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-253-214",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  },
+  {
+   "key": "8-254-214",
+   "repo": "moglob-1.2",
+   "est_records": 0,
+   "state": "planned"
+  }
+ ]
+}
