@@ -165,16 +165,19 @@ export function roadsNear(lon, lat, r = 1000) {
     source: 'OpenStreetMap roads via Overture Maps (ODbL 1.0), the road files of the building cells' };
 }
 const RIBBON_ALT = 2500;
-function addCellRoads(G, withRoads) {
+function addCellRoads(G, withRoads, U) {
   const add = () => {
     if (!G.addCellLayer) return setTimeout(add, 500);
     const query = major => async (bb, level, [x, y]) => { const k8 = `8-${x >> 3}-${y >> 3}`, base = withRoads.get(k8); if (!base) return [];
       const fs = await roadFile(base, `11-${x}-${y}`); return (fs || []).filter(f => f.properties.major === major); };
     // far: lines (one pixel); near (below RIBBON_ALT): every road at its width (road-ribbons.js: width by class, on the
     // globe's ground, asphalt lit by the place's sun; owner, 2026-11-25: "real width please")
-    G.addCellLayer({ id: 'cells:roads-major', label: 'Roads, motorway to tertiary (OpenStreetMap via Overture)', kind: 'lines', levels: [[12000, 11]], style: { color: '#ffcf7a', opacity: 0.9, lift: 2, minAlt: RIBBON_ALT }, query: query(true) });
-    G.addCellLayer({ id: 'cells:roads-minor', label: 'Streets and service roads (OpenStreetMap via Overture)', kind: 'lines', levels: [[6000, 11]], style: { color: '#f2efe6', opacity: 0.55, lift: 2, minAlt: RIBBON_ALT }, query: query(false) });
-    import('./road-ribbons.js').then(({ buildRibbons }) => G.addCellLayer({ id: 'cells:roads-width', label: 'Roads at their width (OpenStreetMap via Overture; width by class, not measured)', kind: 'lines', levels: [[RIBBON_ALT, 11]], style: { color: '#555555' },
+    G.addCellLayer({ id: 'cells:roads-major', label: 'Roads, motorway to tertiary (OpenStreetMap via Overture)', kind: 'lines', levels: [[12000, 11]], style: { color: '#ffcf7a', opacity: 0.9, lift: 2, minAlt: RIBBON_ALT, background: false }, query: query(true) });
+    G.addCellLayer({ id: 'cells:roads-minor', label: 'Streets and service roads (OpenStreetMap via Overture)', kind: 'lines', levels: [[6000, 11]], style: { color: '#f2efe6', opacity: 0.55, lift: 2, minAlt: RIBBON_ALT, background: false }, query: query(false) });
+    // the UK skeleton's road lines (OS Zoomstack, generalised at 50 m at the city level) give way below the cells' major
+    // roads (moglob 2026-11-25: "the road network ... doesn't seem well aligned"): drawn from 12 km up only
+    G.addLayerRule?.(L => { if (L.id === 'uk-skeleton:roads') L.style = { ...L.style, minAlt: Math.max(L.style?.minAlt || 0, 12000) }; });
+    import('./road-ribbons.js').then(({ buildRibbons, setSun }) => setSun(U) || G.addCellLayer({ id: 'cells:roads-width', label: 'Roads at their width (OpenStreetMap via Overture; width by class, not measured)', kind: 'lines', levels: [[RIBBON_ALT, 11]], style: { color: '#555555', background: false },
       build: buildRibbons, query: async (bb, level, xy) => [...await query(true)(bb, level, xy), ...await query(false)(bb, level, xy)] })).catch(e => console.warn('places: road ribbons', e));
   };
   add();
@@ -202,7 +205,7 @@ export async function attachPlaces(G, H, { scene, U }) {
       // beside the cells, data/roads/11-x-y.json, format cell-roads-1): two line layers on the globe's ground, read only for
       // level-8 cells whose index entry has roads, below 12 km eye height (owner, 2026-11-25: "Missing roads?")
       const withRoads = new Map(cx.cells.filter(c => c.state === 'published' && c.roads && cx.repos?.[c.repo]).map(c => [c.key, cx.repos[c.repo].replace(/cells\/$/, 'roads/')]));
-      if (withRoads.size) addCellRoads(G, withRoads);
+      if (withRoads.size) addCellRoads(G, withRoads, U);
 
     } else console.warn('places: ?cells=1 but no cells index');
   }

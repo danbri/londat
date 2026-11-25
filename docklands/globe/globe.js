@@ -374,7 +374,9 @@ export async function createGlobe(H) {
     // (line chunks outside the view frustum are not drawn: fewer draw calls; a chunk's radius is in geometry.userData.r)
     const seen = m => { const r = m.geometry.userData.r; return !r || inFrustum(m.userData.C, r); };
     for (const L of layers) { const vis = L.on && alt >= (L.style.minAlt || 0) && alt <= (L.style.maxAlt || Infinity); if (vis && L.dropped) L.make(); for (const m of L.meshes) { m.visible = vis && seen(m); if (m.visible) place(m); } }
-    for (const L of cellLayers) for (const c of L.cells.values()) for (const m of c.meshes) { if (m.userData.on === undefined) m.userData.on = m.visible; if (m.userData.on) { m.visible = seen(m); if (m.visible) place(m); } else m.visible = false; }
+    // (style.background false: the layer is drawn in globe mode only; cell layers are updated only there, so in the model's
+    // background their meshes kept the last globe view: the cells' roads showed, stale, behind the model; moglob 2026-11-25)
+    for (const L of cellLayers) { const off = (L.style?.background === false && G.mode !== 'globe') || alt < (L.style?.minAlt || 0); for (const c of L.cells.values()) for (const m of c.meshes) { if (m.userData.on === undefined) m.userData.on = m.visible; if (m.userData.on && !off) { m.visible = seen(m); if (m.visible) place(m); } else m.visible = false; } }
     place(atmo); atmo.visible = alt > 2000;
     if (G.onFrame) G.onFrame(eye);   // places as 3D Tiles (globe/places.js): load, free, place the tiles, cut the hole
     // background: black space, sky blue near the ground by day
@@ -757,7 +759,10 @@ body.noLabels #globeLabels,body.noLabels #whereAmI{visibility:hidden!important}
   // x from -180 east, y from -90 north): addCellLayer({ id, label, kind, style, labels?, levels: [[maxEyeAltM, level], ...]
   // (the first whose altitude is above the eye), query: async (bbox [w, s, e, n], level, [x, y]) -> GeoJSON Feature[] })
   const cellLayers = [];
-  G.addCellLayer = function (spec) { const L = { ...spec, cells: new Map(), on: spec.style?.on !== false, mat: lineMaterial(spec.style?.color || '#ffffff', spec.style?.opacity ?? 0.8) }; cellLayers.push(L); if (G.ready) layerUi(true); G.dirty = true; return L; };
+  // layer rules (G.addLayerRule(fn)): fn(L) runs on every cell layer, now and when one is added (places.js: where the cells
+  // have roads, the skeleton's generalised road lines give way below 12 km)
+  const layerRules = []; G.addLayerRule = fn => { layerRules.push(fn); for (const L of cellLayers) fn(L); };
+  G.addCellLayer = function (spec) { const L = { ...spec, cells: new Map(), on: spec.style?.on !== false, mat: lineMaterial(spec.style?.color || '#ffffff', spec.style?.opacity ?? 0.8) }; cellLayers.push(L); for (const fn of layerRules) fn(L); if (G.ready) layerUi(true); G.dirty = true; return L; };
   let cellT = 0;
   function dropCell(L, k, c) { for (const m of c.meshes) { scene.remove(m); m.geometry.dispose(); releaseMesh(m); } if (c.labels.length) { const S = new Set(c.labels); labels.clear(x => S.has(x)); } c.meshes = []; c.labels = []; L.cells.delete(k); }
   function updateCells(now) {

@@ -7,7 +7,7 @@
 // at an inner vertex is along the mean of its two segment normals, scaled by 1 / cos of the half angle (at most 2x).
 // Rule 6: geometry from the road data, the look made here. Skill docklands-3d-page, "Roads at their width (2026-11-25)".
 import * as THREE from 'three/webgpu';
-import { attribute, vec3, vec4, viewZToLogarithmicDepth, positionView, cameraNear, cameraFar, sRGBTransferEOTF } from 'three/tsl';
+import { attribute, vec3, vec4, float, mix, max, dot, normalize, smoothstep, normalWorld, viewZToLogarithmicDepth, positionView, cameraNear, cameraFar, sRGBTransferEOTF } from 'three/tsl';
 import { geodeticToEcef, enuBasis } from '../geo/ellipsoid.js';
 
 export const WIDTH = { motorway: 14, trunk: 11, primary: 9, secondary: 8, tertiary: 7, unclassified: 5.5, residential: 5.5, living_street: 4.5, service: 3.5, pedestrian: 4 };
@@ -15,11 +15,17 @@ export const WIDTH = { motorway: 14, trunk: 11, primary: 9, secondary: 8, tertia
 const COLOUR = { motorway: [.27, .28, .30], trunk: [.28, .29, .31], primary: [.30, .30, .32], secondary: [.32, .32, .33], tertiary: [.34, .34, .34], unclassified: [.38, .37, .35], residential: [.37, .37, .36], living_street: [.42, .40, .37], service: [.40, .39, .37], pedestrian: [.55, .52, .47] };
 const STEP_M = 15, LIFT_M = 0.4;
 
-let MAT = null;
+// lit by the globe's sun (U.sun, the floating frame), as the place blocks (places.js light): sky light by day, the sun on
+// the surface, near black by night; not by the scene's lights (they come with a loaded place: without one the roads were
+// black, moglob 2026-11-25)
+let MAT = null, SUN = null;
+export function setSun(U) { SUN = U?.sun || null; }
 export function ribbonMaterial() {
   if (MAT) return MAT;
-  const m = new THREE.MeshStandardNodeMaterial({ roughness: 0.95, metalness: 0, side: THREE.DoubleSide });
-  m.colorNode = vec4(sRGBTransferEOTF(attribute('rcol', 'vec3')), 1);
+  const m = new THREE.MeshBasicNodeMaterial({ side: THREE.DoubleSide });
+  const n = normalize(normalWorld), base = sRGBTransferEOTF(attribute('rcol', 'vec3'));
+  if (SUN) { const sd = dot(n, SUN), day = smoothstep(-0.1, 0.12, sd), k = mix(float(0.04), float(0.32), day).add(max(sd, 0).mul(0.9).mul(day)); m.colorNode = vec4(base.mul(k), 1); }
+  else m.colorNode = vec4(base.mul(0.6), 1);
   m.depthNode = viewZToLogarithmicDepth(positionView.z.mul(0.997), cameraNear, cameraFar);
   m.polygonOffset = true; m.polygonOffsetFactor = -2; m.polygonOffsetUnits = -2;
   return MAT = m;
@@ -68,7 +74,11 @@ function fill(g, features, heightAt, C, lat0) {
   g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(P), 3));
   g.setAttribute('rcol', new THREE.BufferAttribute(new Float32Array(RC), 3));
   g.setIndex(nv > 65535 ? new THREE.BufferAttribute(new Uint32Array(I), 1) : new THREE.BufferAttribute(new Uint16Array(I), 1));
-  g.computeVertexNormals();   // (the ground's slope; both sides lit: DoubleSide)
+  g.computeVertexNormals();   // (the ground's slope)
+  // all strips are wound alike, so all normals point up or all down: turn them up (the shader takes the normal as the
+  // local up for the sun's height)
+  const N = g.attributes.normal.array, L = Math.hypot(C[0], C[1], C[2]);
+  if (N.length && (N[0] * C[0] + N[1] * C[1] + N[2] * C[2]) / L < 0) { for (let i = 0; i < N.length; i++) N[i] = -N[i]; g.attributes.normal.needsUpdate = true; }
   g.computeBoundingSphere(); g.userData.r = g.boundingSphere.radius + g.boundingSphere.center.length();
   g.attributes.position.needsUpdate = true;
   return nv;
