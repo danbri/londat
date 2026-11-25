@@ -514,716 +514,547 @@
    "key": "8-257-202",
    "repo": "moglob-1.2",
    "est_records": 309239,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-258-202",
    "repo": "moglob-1.2",
    "est_records": 128132,
-   "state": "published",
-   "buildings": 99198,
-   "named": 201,
-   "tiles": 156,
-   "bytes": 3270060,
-   "built": "2026-11-25T13:57:44.782Z",
-   "minutes": 0.7,
-   "commit": "ab134ea"
+   "state": "planned"
   },
   {
    "key": "8-249-203",
    "repo": "moglob-1.2",
    "est_records": 64271,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-250-203",
    "repo": "moglob-1.2",
    "est_records": 137812,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-251-203",
    "repo": "moglob-1.2",
    "est_records": 563835,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-252-203",
    "repo": "moglob-1.2",
    "est_records": 776081,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-253-203",
    "repo": "moglob-1.2",
    "est_records": 650542,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-254-203",
    "repo": "moglob-1.2",
    "est_records": 854962,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-255-203",
    "repo": "moglob-1.2",
    "est_records": 269744,
-   "state": "published",
-   "buildings": 237285,
-   "named": 377,
-   "tiles": 96,
-   "bytes": 3213485,
-   "built": "2026-11-25T14:00:44.025Z",
-   "minutes": 1.2,
-   "commit": "ab134ea"
+   "state": "planned"
   },
   {
    "key": "8-256-203",
    "repo": "moglob-1.2",
    "est_records": 130609,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-257-203",
    "repo": "moglob-1.2",
    "est_records": 100301,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-258-203",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "published",
-   "buildings": 12018,
-   "named": 8,
-   "tiles": 21,
-   "bytes": 391410,
-   "built": "2026-11-25T14:01:41.747Z",
-   "minutes": 0.4,
-   "commit": "ab134ea"
+   "state": "planned"
   },
   {
    "key": "8-245-204",
    "repo": "moglob-1.2",
    "est_records": 138984,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-246-204",
    "repo": "moglob-1.2",
    "est_records": 325198,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-247-204",
    "repo": "moglob-1.2",
    "est_records": 158322,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-249-204",
    "repo": "moglob-1.2",
    "est_records": 31566,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-251-204",
    "repo": "moglob-1.2",
    "est_records": 313490,
-   "state": "published",
-   "buildings": 298645,
-   "named": 503,
-   "tiles": 272,
-   "bytes": 8918474,
-   "built": "2026-11-25T14:03:49.061Z",
-   "minutes": 1.3,
-   "commit": "ab134ea"
+   "state": "planned"
   },
   {
    "key": "8-252-204",
    "repo": "moglob-1.2",
    "est_records": 968227,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-253-204",
    "repo": "moglob-1.2",
    "est_records": 987139,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-254-204",
    "repo": "moglob-1.2",
    "est_records": 446576,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-255-204",
    "repo": "moglob-1.2",
    "est_records": 429470,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-256-204",
    "repo": "moglob-1.2",
    "est_records": 41078,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-244-205",
    "repo": "moglob-1.2",
    "est_records": 87693,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-245-205",
    "repo": "moglob-1.2",
    "est_records": 152759,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-246-205",
    "repo": "moglob-1.2",
    "est_records": 178381,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-247-205",
    "repo": "moglob-1.2",
    "est_records": 565990,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-248-205",
    "repo": "moglob-1.2",
    "est_records": 29634,
-   "state": "published",
-   "buildings": 34628,
-   "named": 7,
-   "tiles": 49,
-   "bytes": 775026,
-   "built": "2026-11-25T14:06:45.798Z",
-   "minutes": 0.4,
-   "commit": "ab134ea"
+   "state": "planned"
   },
   {
    "key": "8-249-205",
    "repo": "moglob-1.2",
    "est_records": 39040,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-250-205",
    "repo": "moglob-1.2",
    "est_records": 65084,
-   "state": "published",
-   "buildings": 27073,
-   "named": 77,
-   "tiles": 46,
-   "bytes": 1054680,
-   "built": "2026-11-25T14:07:31.923Z",
-   "minutes": 0.4,
-   "commit": "ab134ea"
+   "state": "planned"
   },
   {
    "key": "8-251-205",
    "repo": "moglob-1.2",
    "est_records": 112759,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-252-205",
    "repo": "moglob-1.2",
    "est_records": 119838,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-253-205",
    "repo": "moglob-1.2",
    "est_records": 286666,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-254-205",
    "repo": "moglob-1.2",
    "est_records": 238651,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-255-205",
    "repo": "moglob-1.2",
    "est_records": 57596,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-245-206",
    "repo": "moglob-1.2",
    "est_records": 69599,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-246-206",
    "repo": "moglob-1.2",
    "est_records": 77605,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-247-206",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-248-206",
    "repo": "moglob-1.2",
    "est_records": 20531,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-249-206",
    "repo": "moglob-1.2",
    "est_records": 42698,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-250-206",
    "repo": "moglob-1.2",
    "est_records": 39836,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-251-206",
    "repo": "moglob-1.2",
    "est_records": 100580,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-252-206",
    "repo": "moglob-1.2",
    "est_records": 63008,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-253-206",
    "repo": "moglob-1.2",
    "est_records": 343434,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-254-206",
    "repo": "moglob-1.2",
    "est_records": 21117,
-   "state": "published",
-   "buildings": 23426,
-   "named": 109,
-   "tiles": 24,
-   "bytes": 1231342,
-   "built": "2026-11-25T14:10:21.237Z",
-   "minutes": 0.4,
-   "commit": "ab134ea"
+   "state": "planned"
   },
   {
    "key": "8-246-207",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "published",
-   "buildings": 1083,
-   "named": 1,
-   "tiles": 3,
-   "bytes": 56501,
-   "built": "2026-11-25T14:10:40.118Z",
-   "minutes": 0.3,
-   "commit": "ab134ea"
+   "state": "planned"
   },
   {
    "key": "8-247-207",
    "repo": "moglob-1.2",
    "est_records": 22920,
-   "state": "published",
-   "buildings": 4373,
-   "named": 6,
-   "tiles": 15,
-   "bytes": 193799,
-   "built": "2026-11-25T14:11:04.288Z",
-   "minutes": 0.4,
-   "commit": "ab134ea"
+   "state": "planned"
   },
   {
    "key": "8-248-207",
    "repo": "moglob-1.2",
    "est_records": 162756,
-   "state": "published",
-   "buildings": 19774,
-   "named": 18,
-   "tiles": 36,
-   "bytes": 635535,
-   "built": "2026-11-25T14:11:25.757Z",
-   "minutes": 0.4,
-   "commit": "ab134ea"
+   "state": "planned"
   },
   {
    "key": "8-249-207",
    "repo": "moglob-1.2",
    "est_records": 254182,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-250-207",
    "repo": "moglob-1.2",
    "est_records": 545243,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-251-207",
    "repo": "moglob-1.2",
    "est_records": 324400,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-252-207",
    "repo": "moglob-1.2",
    "est_records": 61862,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-253-207",
    "repo": "moglob-1.2",
    "est_records": 38110,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-245-208",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-246-208",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-247-208",
    "repo": "moglob-1.2",
    "est_records": 75150,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-248-208",
    "repo": "moglob-1.2",
    "est_records": 20886,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-249-208",
    "repo": "moglob-1.2",
    "est_records": 20575,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-250-208",
    "repo": "moglob-1.2",
    "est_records": 59470,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-251-208",
    "repo": "moglob-1.2",
    "est_records": 114734,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-252-208",
    "repo": "moglob-1.2",
    "est_records": 81082,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-245-209",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-246-209",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-247-209",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-248-209",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-249-209",
    "repo": "moglob-1.2",
    "est_records": 18799,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-250-209",
    "repo": "moglob-1.2",
    "est_records": 17081,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-251-209",
    "repo": "moglob-1.2",
    "est_records": 62133,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-252-209",
    "repo": "moglob-1.2",
    "est_records": 102480,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-253-209",
    "repo": "moglob-1.2",
    "est_records": 36339,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-245-210",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-246-210",
    "repo": "moglob-1.2",
    "est_records": 21820,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-247-210",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-248-210",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "published",
-   "buildings": 5205,
-   "named": 1,
-   "tiles": 15,
-   "bytes": 184134,
-   "built": "2026-11-25T14:17:21.112Z",
-   "minutes": 0,
-   "commit": "ab134ea"
+   "state": "planned"
   },
   {
    "key": "8-249-210",
    "repo": "moglob-1.2",
    "est_records": 20976,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-250-210",
    "repo": "moglob-1.2",
    "est_records": 59830,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-251-210",
    "repo": "moglob-1.2",
    "est_records": 70876,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-252-210",
    "repo": "moglob-1.2",
    "est_records": 73729,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-253-210",
    "repo": "moglob-1.2",
    "est_records": 149162,
-   "state": "published",
-   "buildings": 8785,
-   "named": 13,
-   "tiles": 16,
-   "bytes": 281547,
-   "built": "2026-11-25T14:18:16.142Z",
-   "minutes": 0.3,
-   "commit": "ab134ea"
+   "state": "planned"
   },
   {
    "key": "8-246-211",
    "repo": "moglob-1.2",
    "est_records": 77112,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-247-211",
    "repo": "moglob-1.2",
    "est_records": 25216,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-248-211",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-249-211",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-250-211",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-251-211",
    "repo": "moglob-1.2",
    "est_records": 34305,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-252-211",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-251-212",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-252-212",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-253-213",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-254-213",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   },
   {
    "key": "8-253-214",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "published",
-   "buildings": 370,
-   "named": 0,
-   "tiles": 2,
-   "bytes": 34106,
-   "built": "2026-11-25T14:20:06.545Z",
-   "minutes": 0.1,
-   "commit": "ab134ea"
+   "state": "planned"
   },
   {
    "key": "8-254-214",
    "repo": "moglob-1.2",
    "est_records": 0,
-   "state": "failed",
-   "error": "exit 1"
+   "state": "planned"
   }
  ]
 }
