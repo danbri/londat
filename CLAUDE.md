@@ -217,13 +217,15 @@ danbri/glitchcan-minigam: https://github.com/danbri/glitchcan-minigam/tree/maste
   come later. Plan: https://github.com/danbri/londat/issues/20 (scale to London, the UK and the world).
 - Tile sets at scale go to the GitHub org `moglob` (owner, 2026-11-25: to "set up a moglob org and moglob-n.m numbered
   region/slice repos programmatically", then "Ok, do (3)"): repositories `moglob/moglob-<n>.<m>`, each under about 900 MB,
-  served at `https://moglob.github.io/moglob-<n>.<m>/` (another origin than danbri.github.io: plain GETs work, Pages sends
-  `Access-Control-Allow-Origin: *`; it refuses CORS preflights). First: https://github.com/moglob/moglob-1.1 . The Claude
-  GitHub App can create a repository there and push (workflows too); it cannot switch on Pages, nor can the workflow's own
-  token ("Resource not accessible by integration", 2026-11-25). So either the owner sets Settings > Pages > Source: GitHub
-  Actions per repository, or an org secret `MOGLOB_PAGES_TOKEN` (fine-grained token, resource owner moglob, Pages and
-  Administration: read and write) lets each repository's pages.yml switch it on. Attach a new repository to the session
-  with add_repo (access push) before any push.
+  served at `https://moglob.github.io/moglob-<n>.<m>/` (another origin than danbri.github.io; Pages sends
+  `Access-Control-Allow-Origin: *` and refuses CORS preflights; measured from a danbri.github.io page on 2026-11-25: a plain
+  GET 200 and a single `Range` GET 206 work, neither needs a preflight; never add custom request headers). First:
+  https://github.com/moglob/moglob-1.1 . The Claude GitHub App creates a repository there (mcp create_repository,
+  organization moglob, private false) and pushes (workflows too). It cannot switch on Pages, nor can the workflow's own
+  token ("Resource not accessible by integration"); the org secret `MOGLOB_PAGES_TOKEN` (owner, 2026-11-25: "Option 2
+  selected and implemented; secret is stored": a fine-grained token, resource owner moglob, Pages and Administration:
+  read and write) lets each repository's `.github/workflows/pages.yml` (copy moglob-1.1's) switch Pages on at its first
+  run. Attach a new repository to the session with add_repo (access push) before any push.
 - `dashboard/`: one status page for the owner, https://danbri.github.io/londat/dashboard/ (owner, 2026-10-07: "Make a
   unified dashboard url for me"): hourly cache runs, deploys, data age, knowledge graph, register, quality, the old-site
   redirect, activity. It reads the GitHub API in the browser (60 requests an hour without sign-in).
